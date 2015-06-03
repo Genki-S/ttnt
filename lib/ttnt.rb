@@ -1,5 +1,5 @@
 require "ttnt/version"
 
-module Ttnt
+module TTNT
   # Your code goes here...
 end
