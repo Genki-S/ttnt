@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
+gem_root = File.expand_path('../lib', File.dirname(File.expand_path(__FILE__)))
 argv = ARGV
-argv.unshift('ruby', '-r ttnt/anchor')
+argv.unshift('ruby', '-I', gem_root, '-r', 'ttnt/anchor')
 
 exec(*argv)
