@@ -9,8 +9,8 @@ module TTNT
       raise 'Not in a git repository' unless @repo
     end
 
-    def append(new_coverage)
-      cov = read_coverage.merge(new_coverage)
+    def append(test_file, new_coverage)
+      cov = read_coverage.merge({ test_file => new_coverage })
       save_coverage(cov)
     end
 
