@@ -13,7 +13,9 @@ module TTNT
     end
 
     def append_from_coverage(test_file, coverage)
-      new_mapping = { test_file => spectra_from_coverage(coverage) }
+      new_mapping = {
+        test_file => normalize_path(select_project_files(spectra_from_coverage(coverage)))
+      }
       mapping = read_mapping.merge(new_mapping)
       save(mapping)
     end
@@ -41,6 +43,18 @@ module TTNT
     end
 
     private
+
+    def normalize_path(spectra)
+      spectra.map do |filename, lines|
+        [filename.sub(@repo.workdir, ''), lines]
+      end.to_h
+    end
+
+    def select_project_files(spectra)
+      spectra.select do |filename, lines|
+        filename.start_with?(@repo.workdir)
+      end
+    end
 
     def spectra_from_coverage(cov)
       spectra = Hash.new { |h, k| h[k] = [] }
