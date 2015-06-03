@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+
+require 'rugged'
+require_relative '../lib/ttnt/test_selector'
+
+USAGE = %{
+ttnt (Test This, Not That)
+
+Usage:
+  ttnt BASE_SHA
+
+What it does:
+  Output test files you should run based on changes between commits BASE_SHA and HEAD.
+}
+
+if ARGV.count != 1
+  puts USAGE
+  exit 1
+end
+
+repo = Rugged::Repository.discover('.')
+ts = TTNT::TestSelector.new(repo.head.target_id, ARGV[0])
+p ts.select_tests

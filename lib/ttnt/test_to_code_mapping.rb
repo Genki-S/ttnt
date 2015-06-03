@@ -26,6 +26,20 @@ module TTNT
       end
     end
 
+    def get_tests(file:, lineno:)
+      tests = Set.new
+      mapping = read_mapping
+      mapping.each do |test, spectra|
+        lines = spectra[file]
+        next unless lines
+        n = lines.bsearch { |x| x >= lineno }
+        if n == lineno
+          tests << test
+        end
+      end
+      tests
+    end
+
     private
 
     def spectra_from_coverage(cov)
