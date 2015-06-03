@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+argv = ARGV
+argv.unshift('ruby', '-r ttnt/anchor')
+
+exec(*argv)
