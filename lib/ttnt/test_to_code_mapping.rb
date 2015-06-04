@@ -6,23 +6,22 @@ require 'json'
 
 module TTNT
   class TestToCodeMapping
+    DIRECTORY_SEPARATOR_PLACEHOLDER = '=+='.freeze
+
     def initialize(sha)
       @sha = sha
       @repo = Rugged::Repository.discover('.')
       raise 'Not in a git repository' unless @repo
     end
 
-    def append_from_coverage(test_file, coverage)
-      new_mapping = {
-        test_file => normalize_path(select_project_files(spectra_from_coverage(coverage)))
-      }
-      mapping = read_mapping.merge(new_mapping)
-      save(mapping)
+    def append_from_coverage(test, coverage)
+      spectra =  normalize_path(select_project_files(spectra_from_coverage(coverage)))
+      save_spectra(test: test, spectra: spectra)
     end
 
-    def read_mapping
-      if File.exists?(mapping_file)
-        JSON.parse(File.read(mapping_file))
+    def read_spectra(test:)
+      if File.exists?(spectra_file(test: test))
+        JSON.parse(File.read(spectra_file(test: test)))
       else
         {}
       end
@@ -30,8 +29,8 @@ module TTNT
 
     def get_tests(file:, lineno:)
       tests = Set.new
-      mapping = read_mapping
-      mapping.each do |test, spectra|
+      all_tests.each do |test|
+        spectra = read_spectra(test: test)
         lines = spectra[file]
         next unless lines
         n = lines.bsearch { |x| x >= lineno }
@@ -67,16 +66,30 @@ module TTNT
       spectra
     end
 
-    def save(mapping)
-      dir = File.dirname(mapping_file)
+    def save_spectra(test:, spectra:)
+      dir = base_savedir
       unless File.directory?(dir)
         FileUtils.mkdir_p(dir)
       end
-      File.write(mapping_file, mapping.to_json)
+      File.write(spectra_file(test: test), spectra.to_json)
     end
 
-    def mapping_file
-      "#{@repo.workdir}/.ttnt/#{@sha}/test_to_code_mapping.json"
+    def base_savedir
+      "#{@repo.workdir}/.ttnt/#{@sha}/test_to_code_mapping"
+    end
+
+    def spectra_file(test:)
+      filename = test.gsub('/', DIRECTORY_SEPARATOR_PLACEHOLDER)
+      "#{base_savedir}/#{filename}.json"
+    end
+
+    def all_tests
+      Dir["#{base_savedir}/*.json"].map do |filename|
+        filename
+          .sub(/.*\//, '')
+          .sub(/\.json\Z/, '')
+          .gsub(DIRECTORY_SEPARATOR_PLACEHOLDER, '/')
+      end
     end
   end
 end
