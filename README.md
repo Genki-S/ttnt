@@ -1,8 +1,48 @@
 # TTNT: Test This, Not That
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/ttnt`. To experiment with that code, run `bin/console` for an interactive prompt.
+Developing under [Google Summer of Code 2015](http://www.google-melange.com/gsoc/homepage/google/gsoc2015) with mentoring organization [Ruby on Rails](http://rubyonrails.org/).
 
-TODO: Delete this and the text above, and describe your gem
+Full proposal of this project is [here](https://github.com/Genki-S/gsoc2015/blob/master/proposal.md) (might be obsolete in some ways, read this README about this project itself rather than the proposal).
+
+## Goal of this project
+
+[rails/rails](https://github.com/rails/rails) has a problem that CI builds take hours to finish. This project aims to solve that problem by making it possible to run only tests related to changes introduced in target commits/branches/PRs.
+
+### Approach
+
+The idea is based on [Aaron Patterson](https://twitter.com/tenderlove)'s article ["Predicting Test Failures"](http://tenderlovemaking.com/2015/02/13/predicting-test-failues.html). This program uses differences in code between base commit (say, the latest commit of master branch) and target commit (say, HEAD of your feature branch) to calculate which test cases are affected by that change.
+
+## Terminology
+
+- code-to-test mapping
+    - mapping which maps code (file name and line number) to test cases the code affects on a given commit
+- base commit
+    - the commit to which the tests you should run will be calculated (e.g. the latest commit of master branch)
+    - this commit should have code-to-test mapping
+- target commit
+    - the commit on which you want to select tests you should run (e.g. HEAD of your feature branch)
+    - this commit does not have to have code-to-test mapping
+
+## Current Status
+
+This project is still in an early stage and we are experimenting the best approach to solve the problem.
+
+Currently, this program does:
+
+- Generate code-to-test mapping for a given commit
+- Given base commit and target commit, output test files you should run
+
+Limitations:
+
+- Test selection algorithm is not perfect yet (it may produce false-positives and false-negatives)
+- Only supports git
+- Only supports MiniTest
+- Only select test files, not fine-grained test cases
+- And a lot more!
+
+## Roadmap
+
+Roadmap is under construction.
 
 ## Installation
 
@@ -22,7 +62,32 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### Produce code-to-test mapping for a given commit
+
+This pre-computation is required to select tests later.
+
+Basically, you can substitute `ruby` command with `ttnt-anchor` command.
+For example, if you want to produce code-to-test mapping for `test/mail_layout_test.rb` in `ActionMailer` of rails/rails:
+
+```
+$ cd /your/local/rails/rails
+$ git checkout BASE_COMMIT
+$ cd actionmailer
+$ ttnt-anchor -w -Itest test/mail_layout_test.rb -n test_explicit_class_layout
+```
+
+(this example is taken from ["Contributing to Ruby on Rails — Ruby on Rails Guides"](http://edgeguides.rubyonrails.org/contributing_to_ruby_on_rails.html#running-tests)).
+
+This will produce code-to-test mapping for the test file `test/mail_layout_test.rb` under `.ttnt/BASE_COMMIT_SHA/test_to_code_mapping/TEST_FILE_NAME.json` which resides in your project base directory (the same repository in which `.git` directory resides).
+
+### Select tests
+
+```
+$ git checkout TARGET_COMMIT
+$ ttnt BASE_COMMIT
+```
+
+This will assume code-to-test mapping is properly produced for the BASE\_COMMIT.
 
 ## Development
 
@@ -32,8 +97,9 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/ttnt. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/Genki-S/ttnt. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](contributor-covenant.org) code of conduct.
 
+Please don't hesitate to [open a issue](https://github.com/Genki-S/ttnt/issues/new) to share your ideas for me! Any comment will be valuable especially in this early development stage.
 
 ## License
 
