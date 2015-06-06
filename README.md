@@ -14,14 +14,15 @@ The idea is based on [Aaron Patterson](https://twitter.com/tenderlove)'s article
 
 ## Terminology
 
-- code-to-test mapping
-    - mapping which maps code (file name and line number) to test cases the code affects on a given commit
+- test-to-code mapping
+    - mapping which maps test (file name) to code (file name and line number) executed on that test run for a given commit
+    - this will be used to determine tests that are affected by changes in code
 - base commit
     - the commit to which the tests you should run will be calculated (e.g. the latest commit of master branch)
-    - this commit should have code-to-test mapping
+    - this commit should have test-to-code mapping
 - target commit
     - the commit on which you want to select tests you should run (e.g. HEAD of your feature branch)
-    - this commit does not have to have code-to-test mapping
+    - this commit does not have to have test-to-code mapping
 
 ## Current Status
 
@@ -29,7 +30,7 @@ This project is still in an early stage and we are experimenting the best approa
 
 Currently, this program does:
 
-- Generate code-to-test mapping for a given commit
+- Generate test-to-code mapping for a given commit
 - Given base commit and target commit, output test files you should run
 
 Limitations:
@@ -62,12 +63,12 @@ Or install it yourself as:
 
 ## Usage
 
-### Produce code-to-test mapping for a given commit
+### Produce test-to-code mapping for a given commit
 
 This pre-computation is required to select tests later.
 
 Basically, you can substitute `ruby` command with `ttnt-anchor` command.
-For example, if you want to produce code-to-test mapping for `test/mail_layout_test.rb` in `ActionMailer` of rails/rails:
+For example, if you want to produce test-to-code mapping for `test/mail_layout_test.rb` in `ActionMailer` of rails/rails:
 
 ```
 $ cd /your/local/rails/rails
@@ -78,7 +79,7 @@ $ ttnt-anchor -w -Itest test/mail_layout_test.rb -n test_explicit_class_layout
 
 (this example is taken from ["Contributing to Ruby on Rails — Ruby on Rails Guides"](http://edgeguides.rubyonrails.org/contributing_to_ruby_on_rails.html#running-tests)).
 
-This will produce code-to-test mapping for the test file `test/mail_layout_test.rb` under `.ttnt/BASE_COMMIT_SHA/test_to_code_mapping/TEST_FILE_NAME.json` which resides in your project base directory (the same repository in which `.git` directory resides).
+This will produce test-to-code mapping for the test file `test/mail_layout_test.rb` under `.ttnt/BASE_COMMIT_SHA/test_to_code_mapping/TEST_FILE_NAME.json` which resides in your project base directory (the same repository in which `.git` directory resides).
 
 ### Select tests
 
@@ -87,7 +88,7 @@ $ git checkout TARGET_COMMIT
 $ ttnt BASE_COMMIT
 ```
 
-This will assume code-to-test mapping is properly produced for the BASE\_COMMIT.
+This will assume test-to-code mapping is properly produced for the BASE\_COMMIT.
 
 ## Development
 
