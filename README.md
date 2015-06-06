@@ -1,4 +1,4 @@
-# TTNT: Test This, Not That
+# TTNT: Test This, Not That!
 
 Developing under [Google Summer of Code 2015](http://www.google-melange.com/gsoc/homepage/google/gsoc2015) with mentoring organization [Ruby on Rails](http://rubyonrails.org/).
 
