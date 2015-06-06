@@ -61,6 +61,10 @@ Or install it yourself as:
 
     $ gem install ttnt
 
+## Requirements
+
+Developed and only tested under ruby version 2.2.1.
+
 ## Usage
 
 ### Produce test-to-code mapping for a given commit
