@@ -41,6 +41,30 @@ Limitations:
 - Only select test files, not fine-grained test cases
 - And a lot more!
 
+## Testing it out
+
+I integrated it under [use_ttnt branch of my forked version of rails/rails](https://github.com/Genki-S/rails/tree/use_ttnt). You can get the idea by [looking at it's diff](https://github.com/rails/rails/compare/master...Genki-S:use_ttnt) (basically I've just added `ttnt:anchor` rake task, which uses `ttnt-anchor` program in place of ruby when running isolated test). To test this out:
+
+```
+$ git clone https://github.com/Genki-S/rails
+$ git checkout use_ttnt
+$ # Or add my repository as a remote of your rails/rails and checkout my branch
+$ bundle install
+$ cd actionmailer
+$ # I recommend running it under one gem because it's long to run for all gems
+$ bundle exec rake ttnt:anchor
+```
+
+This produces code-to-test-mapping as `.ttnt/code-to-test-mapping/BASE_COMMIT_SHA/TEST_FILE_NAME.json` to your project root.
+
+To try selecting tests using ttnt, introduce some commits which will break some tests on which you ran `rake ttnt:anchor` with the previous commands, and execute the following:
+
+```
+$ ttnt BASE_COMMIT_SHA
+```
+
+Or try out my [ttnt_selection_test branch](https://github.com/Genki-S/rails/tree/ttnt_selection_test) on which I have done it for you (though it's not a great example). More information is written on the README on that branch.
+
 ## Roadmap
 
 Roadmap is under construction.
