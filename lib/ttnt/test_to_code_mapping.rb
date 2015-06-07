@@ -43,9 +43,13 @@ module TTNT
 
     private
 
+    def normalized_path(file)
+      File.expand_path(file).sub(@repo.workdir, '')
+    end
+
     def normalize_path(spectra)
       spectra.map do |filename, lines|
-        [filename.sub(@repo.workdir, ''), lines]
+        [normalized_path(filename), lines]
       end.to_h
     end
 
@@ -79,7 +83,7 @@ module TTNT
     end
 
     def spectra_file(test:)
-      filename = test.gsub('/', DIRECTORY_SEPARATOR_PLACEHOLDER)
+      filename = normalized_path(test).gsub('/', DIRECTORY_SEPARATOR_PLACEHOLDER)
       "#{base_savedir}/#{filename}.json"
     end
 
