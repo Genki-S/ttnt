@@ -113,6 +113,16 @@ Developed and only tested under ruby version 2.2.1.
 
 ### Produce test-to-code mapping for a given commit
 
+### Using rake task
+
+If you defined TTNT rake task as described above, you can run following command to produce test-to-code mapping:
+
+```
+$ rake ttnt:anchor
+```
+
+### Using ttnt-anchor executable
+
 This pre-computation is required to select tests later.
 
 Basically, you can substitute `ruby` command with `ttnt-anchor` command.
