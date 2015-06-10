@@ -41,6 +41,11 @@ module TTNT
       tests
     end
 
+    # FIXME: this might not be the responsibility for this class
+    def save_commit_info(sha)
+      File.write(commit_info_file, sha)
+    end
+
     private
 
     def normalized_path(file)
@@ -85,6 +90,10 @@ module TTNT
 
     def mapping_file
       "#{base_savedir}/test_to_code_mapping.json"
+    end
+
+    def commit_info_file
+      "#{base_savedir}/commit_obj.txt"
     end
   end
 end
