@@ -43,7 +43,9 @@ module TTNT
             STDERR.puts 'No test selected.'
           else
             # TODO: actually run tests
-            puts tests
+            tests.each do |test|
+              puts test
+            end
           end
         end
       end

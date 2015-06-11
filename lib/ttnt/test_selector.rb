@@ -7,6 +7,11 @@ module TTNT
     def initialize(target_sha, base_sha)
       @repo = Rugged::Repository.discover('.')
       @target_obj = @repo.lookup(target_sha)
+
+      # Base should be the commit `ttnt:anchor` has run on.
+      # NOT the one test-to-code mapping was commited to.
+      ttnt_tree = @repo.lookup(@repo.lookup(base_sha).tree['.ttnt'][:oid])
+      base_sha = @repo.lookup(ttnt_tree['commit_obj.txt'][:oid]).content
       @base_obj = @repo.lookup(base_sha)
     end
 
