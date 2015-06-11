@@ -3,11 +3,10 @@ require 'json'
 
 # Terminologies:
 #   spectra: { filename => [line, numbers, executed], ... }
+#   mapping: { test_file => spectra }
 
 module TTNT
   class TestToCodeMapping
-    DIRECTORY_SEPARATOR_PLACEHOLDER = '=+='.freeze
-
     def initialize(sha)
       @sha = sha
       @repo = Rugged::Repository.discover('.')
@@ -15,22 +14,23 @@ module TTNT
     end
 
     def append_from_coverage(test, coverage)
-      spectra =  normalize_path(select_project_files(spectra_from_coverage(coverage)))
-      save_spectra(test: test, spectra: spectra)
+      spectra = normalize_path(select_project_files(spectra_from_coverage(coverage)))
+      save_mapping(test: test, spectra: spectra)
     end
 
-    def read_spectra(test:)
-      if File.exists?(spectra_file(test: test))
-        JSON.parse(File.read(spectra_file(test: test)))
+    def read_mapping
+      if File.exists?(mapping_file)
+        JSON.parse(File.read(mapping_file))
       else
         {}
       end
     end
 
+    # Get tests affected from change of file `file` at line number `lineno`
     def get_tests(file:, lineno:)
       tests = Set.new
-      all_tests.each do |test|
-        spectra = read_spectra(test: test)
+      mapping = read_mapping
+      mapping.each do |test, spectra|
         lines = spectra[file]
         next unless lines
         n = lines.bsearch { |x| x >= lineno }
@@ -39,6 +39,11 @@ module TTNT
         end
       end
       tests
+    end
+
+    # FIXME: this might not be the responsibility for this class
+    def save_commit_info(sha)
+      File.write(commit_info_file, sha)
     end
 
     private
@@ -70,30 +75,25 @@ module TTNT
       spectra
     end
 
-    def save_spectra(test:, spectra:)
+    def save_mapping(test:, spectra:)
       dir = base_savedir
       unless File.directory?(dir)
         FileUtils.mkdir_p(dir)
       end
-      File.write(spectra_file(test: test), spectra.to_json)
+      mapping = read_mapping.merge({ test => spectra })
+      File.write(mapping_file, mapping.to_json)
     end
 
     def base_savedir
-      "#{@repo.workdir}/.ttnt/#{@sha}/test_to_code_mapping"
+      "#{@repo.workdir}/.ttnt"
     end
 
-    def spectra_file(test:)
-      filename = normalized_path(test).gsub('/', DIRECTORY_SEPARATOR_PLACEHOLDER)
-      "#{base_savedir}/#{filename}.json"
+    def mapping_file
+      "#{base_savedir}/test_to_code_mapping.json"
     end
 
-    def all_tests
-      Dir["#{base_savedir}/*.json"].map do |filename|
-        filename
-          .sub(/.*\//, '')
-          .sub(/\.json\Z/, '')
-          .gsub(DIRECTORY_SEPARATOR_PLACEHOLDER, '/')
-      end
+    def commit_info_file
+      "#{base_savedir}/commit_obj.txt"
     end
   end
 end

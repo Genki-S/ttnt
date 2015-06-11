@@ -11,4 +11,5 @@ at_exit do
   sha = Rugged::Repository.discover('.').head.target_id
   mapping = TTNT::TestToCodeMapping.new(sha)
   mapping.append_from_coverage(test_file, Coverage.result)
+  mapping.save_commit_info(sha)
 end
