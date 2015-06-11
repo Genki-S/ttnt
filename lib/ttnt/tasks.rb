@@ -4,7 +4,7 @@ require 'ttnt/testtask'
 require 'ttnt/test_selector'
 require 'rugged'
 
-# https://github.com/bundler/bundler/blob/master/lib/bundler/gem_helper.rb
+# Reference: https://github.com/bundler/bundler/blob/master/lib/bundler/gem_helper.rb
 module TTNT
   class TaskHelper
     include Rake::DSL if defined? Rake::DSL
