@@ -85,6 +85,26 @@ Or install it yourself as:
 
     $ gem install ttnt
 
+### Define rake tasks
+
+You can define TTNT rake tasks by following steps:
+
+1. `require 'ttnt/tasks'`
+2. Define `TTNT::TestTask` when defining `Rake::TestTask`
+
+Your `Rakefile` will look like this:
+
+```
+require 'rake/testtask'
+require 'ttnt/tasks'
+
+Rake::TestTask.new { |t|
+  t.libs << "test"
+  t.pattern = 'test/**/*_test.rb'
+  TTNT::TestTask.new(t)
+}
+```
+
 ## Requirements
 
 Developed and only tested under ruby version 2.2.1.
@@ -92,6 +112,16 @@ Developed and only tested under ruby version 2.2.1.
 ## Usage
 
 ### Produce test-to-code mapping for a given commit
+
+### Using rake task
+
+If you defined TTNT rake task as described above, you can run following command to produce test-to-code mapping:
+
+```
+$ rake ttnt:anchor
+```
+
+### Using ttnt-anchor executable
 
 This pre-computation is required to select tests later.
 
