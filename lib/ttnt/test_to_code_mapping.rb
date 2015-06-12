@@ -1,5 +1,6 @@
 require 'rugged'
 require 'json'
+require 'set'
 
 # Terminologies:
 #   spectra: { filename => [line, numbers, executed], ... }

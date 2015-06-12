@@ -29,6 +29,16 @@ class TestToCodeMappingTest < Minitest::Test
     assert_equal @repo.head.target_id, File.read("#{@repo.workdir}/.ttnt/commit_obj.txt")
   end
 
+  def test_get_tests
+    test_file = 'test/fizz_test.rb'
+    coverage = { "#{@repo.workdir}/lib/fizzbuzz.rb"=> [1, 1, nil, 1, 0, 1, 0, 1] }
+    @test_to_code_mapping.append_from_coverage(test_file, coverage)
+    assert @test_to_code_mapping.get_tests(file: 'lib/fizzbuzz.rb', lineno: 3).empty?,
+      'It should be empty for code which is not executed'
+    assert_equal Set.new([test_file]),
+      @test_to_code_mapping.get_tests(file: 'lib/fizzbuzz.rb', lineno: 2)
+  end
+
   private
 
   def prepare_git_repository
