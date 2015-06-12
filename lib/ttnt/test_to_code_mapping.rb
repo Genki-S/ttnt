@@ -7,9 +7,9 @@ require 'json'
 
 module TTNT
   class TestToCodeMapping
-    def initialize(sha)
+    def initialize(repo, sha)
+      @repo = repo
       @sha = sha
-      @repo = Rugged::Repository.discover('.')
       raise 'Not in a git repository' unless @repo
     end
 

@@ -17,7 +17,7 @@ module TTNT
 
     def select_tests
       tests = Set.new
-      mapping = TTNT::TestToCodeMapping.new(@base_obj.oid)
+      mapping = TTNT::TestToCodeMapping.new(@repo, @base_obj.oid)
       # TODO: if mapping is not found (ttnt-anchor has not been run)
 
       diff = @base_obj.diff(@target_obj)
