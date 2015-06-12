@@ -43,6 +43,9 @@ module TTNT
 
     # FIXME: this might not be the responsibility for this class
     def save_commit_info(sha)
+      unless File.directory?(File.dirname(commit_info_file))
+        FileUtils.mkdir_p(File.dirname(commit_info_file))
+      end
       File.write(commit_info_file, sha)
     end
 
