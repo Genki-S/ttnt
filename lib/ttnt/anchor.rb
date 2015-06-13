@@ -8,8 +8,9 @@ Coverage.start
 
 at_exit do
   # Use current HEAD
-  sha = Rugged::Repository.discover('.').head.target_id
-  mapping = TTNT::TestToCodeMapping.new(sha)
+  repo = Rugged::Repository.discover('.')
+  sha = repo.head.target_id
+  mapping = TTNT::TestToCodeMapping.new(repo, sha)
   mapping.append_from_coverage(test_file, Coverage.result)
   mapping.save_commit_info(sha)
 end

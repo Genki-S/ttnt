@@ -2,3 +2,7 @@ language: ruby
 rvm:
   - 2.2.0
 before_install: gem install bundler -v 1.10.2
+install:
+  - ./bin/setup
+script:
+  - bundle exec rake test

@@ -19,7 +19,7 @@ if ARGV.count != 1
 end
 
 repo = Rugged::Repository.discover('.')
-ts = TTNT::TestSelector.new(repo.head.target_id, ARGV[0])
+ts = TTNT::TestSelector.new(repo, repo.head.target_id, ARGV[0])
 tests = ts.select_tests
 if tests.empty?
   STDERR.puts 'No test selected.'

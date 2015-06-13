@@ -1,5 +1,6 @@
 require 'rugged'
 require 'json'
+require 'set'
 
 # Terminologies:
 #   spectra: { filename => [line, numbers, executed], ... }
@@ -7,9 +8,9 @@ require 'json'
 
 module TTNT
   class TestToCodeMapping
-    def initialize(sha)
+    def initialize(repo, sha)
+      @repo = repo
       @sha = sha
-      @repo = Rugged::Repository.discover('.')
       raise 'Not in a git repository' unless @repo
     end
 
@@ -43,6 +44,9 @@ module TTNT
 
     # FIXME: this might not be the responsibility for this class
     def save_commit_info(sha)
+      unless File.directory?(File.dirname(commit_info_file))
+        FileUtils.mkdir_p(File.dirname(commit_info_file))
+      end
       File.write(commit_info_file, sha)
     end
 

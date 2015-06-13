@@ -4,8 +4,8 @@ require_relative './test_to_code_mapping'
 
 module TTNT
   class TestSelector
-    def initialize(target_sha, base_sha)
-      @repo = Rugged::Repository.discover('.')
+    def initialize(repo, target_sha, base_sha)
+      @repo = repo
       @target_obj = @repo.lookup(target_sha)
 
       # Base should be the commit `ttnt:anchor` has run on.
@@ -17,7 +17,7 @@ module TTNT
 
     def select_tests
       tests = Set.new
-      mapping = TTNT::TestToCodeMapping.new(@base_obj.oid)
+      mapping = TTNT::TestToCodeMapping.new(@repo, @base_obj.oid)
       # TODO: if mapping is not found (ttnt-anchor has not been run)
 
       diff = @base_obj.diff(@target_obj)
