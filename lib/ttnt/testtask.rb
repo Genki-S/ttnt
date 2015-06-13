@@ -9,19 +9,19 @@ module TTNT
     ATTRIBUTES = %i(
       name
       libs
-      pattern
+      verbose
       options
-      test_files
       warning
+      pattern
       loader
       ruby_opts
       description
-      pattern
     ).freeze
 
     ATTRIBUTES.each do |attr|
       attr_reader attr
     end
+    attr_reader :test_files
 
     def initialize(rake_test_task)
       ATTRIBUTES.each do |attr|
@@ -29,6 +29,8 @@ module TTNT
           instance_eval("@#{attr.to_s} = rake_test_task.#{attr.to_s}")
         end
       end
+      # Since test_files is not exposed in Rake::TestTask
+      @test_files = rake_test_task.instance_variable_get('@test_files')
       @@instances << self
     end
   end
