@@ -15,4 +15,8 @@ class TestSelectorTest < TTNT::TestCase
     assert_equal @selector.instance_variable_get('@base_obj').oid,
       "7683a5d271c6829567d347b927dcf0625f3ce8f5"
   end
+
+  def test_selects_tests
+    assert_equal @selector.select_tests.to_a, ['test/fizz_test.rb']
+  end
 end
