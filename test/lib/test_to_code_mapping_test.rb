@@ -4,6 +4,8 @@ require 'ttnt/test_to_code_mapping'
 class TestToCodeMappingTest < TTNT::TestCase
   def setup
     super
+    # These tests do not depend on fixture file
+    File.delete("#{@repo.workdir}/.ttnt/test_to_code_mapping.json")
     @test_to_code_mapping = TTNT::TestToCodeMapping.new(@repo, @repo.head.target_id)
   end
 
