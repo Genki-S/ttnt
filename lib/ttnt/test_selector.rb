@@ -4,8 +4,8 @@ require_relative './test_to_code_mapping'
 
 module TTNT
   class TestSelector
-    def initialize(target_sha, base_sha)
-      @repo = Rugged::Repository.discover('.')
+    def initialize(repo, target_sha, base_sha)
+      @repo = repo
       @target_obj = @repo.lookup(target_sha)
 
       # Base should be the commit `ttnt:anchor` has run on.
