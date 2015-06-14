@@ -9,11 +9,11 @@ module TTNT
   class TaskHelper
     include Rake::DSL
 
-    def self.install_tasks
-      new.install
+    def self.define_tasks
+      new.define
     end
 
-    def install
+    def define
       namespace :ttnt do
         desc 'Generate test-to-code mapping for current commit object'
         task 'anchor' do
@@ -53,4 +53,4 @@ module TTNT
   end
 end
 
-TTNT::TaskHelper.install_tasks
+TTNT::TaskHelper.define_tasks
