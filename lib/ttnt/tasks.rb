@@ -19,9 +19,8 @@ module TTNT
         task 'anchor' do
           # TODO: what if multiple test tasks are defined?
           test_task = TTNT::TestTask.instances.first
-          test_files = []
+          test_files = Rake::FileList[test_task.pattern].compact
           test_files += test_task.test_files.to_a if test_task.test_files
-          test_files += Rake::FileList[test_task.pattern] if test_task.pattern
 
           # TODO: properly regard run options defined for Rake::TestTask
           gem_root = File.expand_path('..', File.dirname(File.expand_path(__FILE__)))
