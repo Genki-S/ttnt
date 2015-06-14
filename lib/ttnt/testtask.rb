@@ -6,27 +6,14 @@ module TTNT
       @@instances
     end
 
-    ATTRIBUTES = %i(
-      name
-      libs
-      verbose
-      options
-      warning
-      pattern
-      loader
-      ruby_opts
-      description
-    ).freeze
-
-    ATTRIBUTES.each do |attr|
-      attr_reader attr
-    end
-    attr_reader :test_files
-
     def initialize(rake_test_task)
-      ATTRIBUTES.each do |attr|
-        if rake_test_task.respond_to?(attr)
-          instance_eval("@#{attr.to_s} = rake_test_task.#{attr.to_s}")
+      attributes = rake_test_task.instance_variables
+      attributes.map! { |attribute| attribute[1..-1] }
+
+      attributes.each do |ivar|
+        self.class.class_eval("attr_accessor :#{ivar}")
+        if rake_test_task.respond_to?(ivar)
+          send(:"#{ivar}=", rake_test_task.send(:"#{ivar}"))
         end
       end
       # Since test_files is not exposed in Rake::TestTask
