@@ -50,4 +50,6 @@ module TTNT
   end
 end
 
+# Define tasks when this file is required (this file is intended to be required from Rakefile)
+# ref: https://github.com/bundler/bundler//blob/master/lib/bundler/gem_tasks.rb
 TTNT::TaskHelper.define_tasks
