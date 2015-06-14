@@ -23,9 +23,7 @@ module TTNT
           test_files += test_task.test_files.to_a if test_task.test_files
 
           # TODO: properly regard run options defined for Rake::TestTask
-          gem_root = File.expand_path('..', File.dirname(File.expand_path(__FILE__)))
-          args = "-I#{gem_root} -r ttnt/anchor"
-          args += " -I#{test_task.libs.join(':')}" unless test_task.libs.empty?
+          args = "-I#{test_task.libs.join(':')} -r ttnt/anchor"
           test_files.each do |test_file|
             ruby "#{args} #{test_file}"
           end
