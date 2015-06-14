@@ -7,7 +7,7 @@ require 'rugged'
 # Reference: https://github.com/bundler/bundler/blob/master/lib/bundler/gem_helper.rb
 module TTNT
   class TaskHelper
-    include Rake::DSL if defined? Rake::DSL
+    include Rake::DSL
 
     def self.install_tasks
       new.install
