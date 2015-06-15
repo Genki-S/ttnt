@@ -7,12 +7,14 @@ module TTNT
   class TestCase < Minitest::Test
     FIZZBUZZ_FIXTURE_DIR = File.expand_path('../fixtures/repositories/fizzbuzz', __FILE__).freeze
 
-    def setup
+    def before_setup
+      super
       prepare_git_repository
     end
 
-    def teardown
+    def after_teardown
       FileUtils.remove_entry_secure(@tmpdir)
+      super
     end
 
     private
