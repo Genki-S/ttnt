@@ -1,5 +1,5 @@
 require 'test_helper'
-require 'ttnt/tasks'
+require 'ttnt/task_helper'
 
 class TasksTest < Minitest::Test
   def test_define_rake_tasks

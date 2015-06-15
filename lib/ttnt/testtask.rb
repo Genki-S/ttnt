@@ -1,3 +1,5 @@
+require 'ttnt/task_helper'
+
 module TTNT
   class TestTask
     @@instances = []
