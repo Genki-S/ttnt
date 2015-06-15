@@ -43,30 +43,6 @@ Limitations:
 - Only select test files, not fine-grained test cases
 - And a lot more!
 
-## Testing it out
-
-I integrated it under [use_ttnt branch of my forked version of rails/rails](https://github.com/Genki-S/rails/tree/use_ttnt). You can get the idea by [looking at it's diff](https://github.com/rails/rails/compare/master...Genki-S:use_ttnt) (basically I've just added `ttnt:anchor` rake task, which uses `ttnt-anchor` program in place of ruby when running isolated test). To test this out:
-
-```
-$ git clone https://github.com/Genki-S/rails
-$ git checkout use_ttnt
-$ # Or add my repository as a remote of your rails/rails and checkout my branch
-$ bundle install
-$ cd actionmailer
-$ # I recommend running it under one gem because it's long to run for all gems
-$ bundle exec rake ttnt:anchor
-```
-
-This produces code-to-test-mapping as `.ttnt/code-to-test-mapping/BASE_COMMIT_SHA/TEST_FILE_NAME.json` to your project root.
-
-To try selecting tests using ttnt, introduce some commits which will break some tests on which you ran `rake ttnt:anchor` with the previous commands, and execute the following:
-
-```
-$ ttnt BASE_COMMIT_SHA
-```
-
-Or try out my [ttnt_selection_test branch](https://github.com/Genki-S/rails/tree/ttnt_selection_test) on which I have done it for you (though it's not a great example). More information is written on the README on that branch.
-
 ## Roadmap
 
 Roadmap is under construction.
@@ -119,50 +95,19 @@ Developed and only tested under ruby version 2.2.2.
 
 ### Produce test-to-code mapping for a given commit
 
-#### Using rake task
-
 If you defined TTNT rake task as described above, you can run following command to produce test-to-code mapping:
 
 ```
 $ rake ttnt:my_test_name:anchor
 ```
 
-#### Using ttnt-anchor executable
-
-This pre-computation is required to select tests later.
-
-Basically, you can substitute `ruby` command with `ttnt-anchor` command.
-For example, if you want to produce test-to-code mapping for `test/mail_layout_test.rb` in `ActionMailer` of rails/rails:
-
-```
-$ cd /your/local/rails/rails
-$ git checkout BASE_COMMIT
-$ cd actionmailer
-$ ttnt-anchor -w -Itest test/mail_layout_test.rb -n test_explicit_class_layout
-```
-
-(this example is taken from ["Contributing to Ruby on Rails — Ruby on Rails Guides"](http://edgeguides.rubyonrails.org/contributing_to_ruby_on_rails.html#running-tests)).
-
-This will produce test-to-code mapping for the test file `test/mail_layout_test.rb` under `.ttnt/BASE_COMMIT_SHA/test_to_code_mapping/TEST_FILE_NAME.json` which resides in your project base directory (the same repository in which `.git` directory resides).
-
 ### Select tests
-
-#### Using rake task
 
 If you defined TTNT rake task as described above, you can run following command to run selected tests.
 
 ```
 $ rake ttnt:my_test_name:run
 ```
-
-#### Using ttnt executable
-
-```
-$ git checkout TARGET_COMMIT
-$ ttnt BASE_COMMIT
-```
-
-This will assume test-to-code mapping is properly produced for the BASE\_COMMIT.
 
 ## Development
 
