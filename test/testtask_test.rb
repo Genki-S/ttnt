@@ -7,7 +7,7 @@ class TestTaskTest < Minitest::Test
     rake_task = nil
     # This will be in users' Rakefiles
     Rake::TestTask.new { |t|
-      t.libs << "test"
+      t.libs << 'test'
       t.pattern = 'test/**/*_test.rb'
       TTNT::TestTask.new(t)
       rake_task = t # save for testing purpose
