@@ -91,14 +91,14 @@ Or install it yourself as:
 
 You can define TTNT rake tasks by following steps:
 
-1. `require 'ttnt/tasks'`
+1. `require 'ttnt/testtask'`
 2. Define `TTNT::TestTask` when defining `Rake::TestTask`
 
 Your `Rakefile` will look like this:
 
 ```
 require 'rake/testtask'
-require 'ttnt/tasks'
+require 'ttnt/testtask'
 
 Rake::TestTask.new { |t|
   t.libs << "test"

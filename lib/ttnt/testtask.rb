@@ -7,6 +7,9 @@ module TTNT
     end
 
     def initialize(rake_test_task)
+      # TODO: regard `rake_test_task.name` and define TTNT tasks according it
+      TTNT::TaskHelper.define_tasks
+
       attributes = rake_test_task.instance_variables
       attributes.map! { |attribute| attribute[1..-1] }
 
