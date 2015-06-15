@@ -30,8 +30,7 @@ module TTNT
     # Get tests affected from change of file `file` at line number `lineno`
     def get_tests(file:, lineno:)
       tests = Set.new
-      mapping = read_mapping
-      mapping.each do |test, spectra|
+      read_mapping.each do |test, spectra|
         lines = spectra[file]
         next unless lines
         n = lines.bsearch { |x| x >= lineno }
