@@ -101,11 +101,15 @@ require 'rake/testtask'
 require 'ttnt/testtask'
 
 Rake::TestTask.new { |t|
-  t.libs << "test"
+  t.name = 'my_test_name'
+  t.libs << 'test'
   t.pattern = 'test/**/*_test.rb'
   TTNT::TestTask.new(t)
 }
 ```
+
+This will define 2 rake tasks `ttnt:my_test_name:anchor` and `ttnt:my_test_name:run`.
+Usage for those tasks are described later in this document.
 
 ## Requirements
 
@@ -115,15 +119,15 @@ Developed and only tested under ruby version 2.2.1.
 
 ### Produce test-to-code mapping for a given commit
 
-### Using rake task
+#### Using rake task
 
 If you defined TTNT rake task as described above, you can run following command to produce test-to-code mapping:
 
 ```
-$ rake ttnt:anchor
+$ rake ttnt:test:anchor
 ```
 
-### Using ttnt-anchor executable
+#### Using ttnt-anchor executable
 
 This pre-computation is required to select tests later.
 
@@ -142,6 +146,16 @@ $ ttnt-anchor -w -Itest test/mail_layout_test.rb -n test_explicit_class_layout
 This will produce test-to-code mapping for the test file `test/mail_layout_test.rb` under `.ttnt/BASE_COMMIT_SHA/test_to_code_mapping/TEST_FILE_NAME.json` which resides in your project base directory (the same repository in which `.git` directory resides).
 
 ### Select tests
+
+#### Using rake task
+
+If you defined TTNT rake task as described above, you can run following command to run selected tests.
+
+```
+$ rake ttnt:test:run
+```
+
+#### Using ttnt executable
 
 ```
 $ git checkout TARGET_COMMIT
