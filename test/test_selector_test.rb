@@ -3,7 +3,6 @@ require 'ttnt/test_selector'
 
 class TestSelectorTest < TTNT::TestCase
   def setup
-    super
     target_sha = @repo.branches['change_fizz'].target.oid
     master_sha = @repo.branches['master'].target.oid
     base_sha = @repo.merge_base(target_sha, master_sha)
