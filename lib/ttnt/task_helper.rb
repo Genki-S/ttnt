@@ -18,8 +18,7 @@ module TTNT
         namespace name.to_sym do
           desc 'Generate test-to-code mapping for current commit object'
           task 'anchor' do
-            # TODO: what if multiple test tasks are defined?
-            test_task = TTNT::TestTask.instances.first
+            test_task = TTNT::TestTask.find_by_name(name)
             test_files = Rake::FileList[test_task.pattern].compact
             test_files += test_task.test_files.to_a if test_task.test_files
 

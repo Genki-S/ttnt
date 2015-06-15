@@ -8,6 +8,10 @@ module TTNT
       @@instances
     end
 
+    def self.find_by_name(name)
+      @@instances.select { |i| i.name == name }.first
+    end
+
     def initialize(rake_test_task)
       TTNT::TaskHelper.define_tasks(rake_test_task.name)
 
