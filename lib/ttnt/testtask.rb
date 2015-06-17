@@ -1,4 +1,5 @@
 require 'rugged'
+require 'colorize'
 require 'rake'
 require 'ttnt/test_selector'
 
@@ -85,6 +86,11 @@ module TTNT
         # See test/test_helper.rb
         ENV['ANCHOR_TASK'] = '1'
 
+        unless repo.diff_workdir('HEAD').deltas.empty?
+          print_dirty_workdir_warning
+          exit 1
+        end
+
         Rake::FileUtilsExt.verbose(@rake_testtask.verbose) do
           # Make it possible to require files in this gem
           gem_root = File.expand_path('../..', __FILE__)
@@ -113,6 +119,15 @@ module TTNT
             "[ruby #{args}]"
         end
       end
+    end
+
+    def print_dirty_workdir_warning
+      lines = [
+        'You have uncommited changes in your working directory.',
+        'This can produce inconsistent data to your test-to-code mapping.',
+        "Please commit changes before running `rake ttnt:#{@rake_testtask.name}:anchor`."
+      ].map { |l| l.colorize(:red) }
+      warn(*lines)
     end
   end
 end

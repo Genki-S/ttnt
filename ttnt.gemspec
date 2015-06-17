@@ -29,6 +29,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "rugged", "0.23.0b2"
   spec.add_dependency "json", "1.8.3"
+  spec.add_dependency "colorize", "0.7.7"
 
   spec.add_development_dependency "bundler", "~> 1.10"
   spec.add_development_dependency "rake", "~> 10.0"
