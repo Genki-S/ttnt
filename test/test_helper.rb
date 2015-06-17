@@ -25,7 +25,7 @@ module TTNT
       @repodir = "#{@tmpdir}/fizzbuzz"
       Dir.chdir(@repodir) do
         FileUtils.rm('.git')
-        File.rename('.gitted', '.git') if File.exist?(".gitted")
+        FileUtils.cp_r('.gitted', '.git') if File.exist?(".gitted")
       end
       @repo = Rugged::Repository.new(@repodir)
     end
