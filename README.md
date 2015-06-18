@@ -109,7 +109,7 @@ Rake::TestTask.new { |t|
 
 ## Requirements
 
-Developed and only tested under ruby version 2.2.1.
+Developed and only tested under ruby version 2.2.2.
 
 ## Usage
 
