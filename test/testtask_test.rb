@@ -5,14 +5,13 @@ require 'rake/testtask'
 class TestTaskTest < Minitest::Test
   def setup
     @name = 'sample_name'
-    @rake_task = nil
+    @rake_task, @ttnt_task = nil, nil
     # This will be in users' Rakefiles
-    @ttnt_task = Rake::TestTask.new { |t|
+    @rake_task = Rake::TestTask.new { |t|
       t.name = @name
       t.libs << 'test'
       t.pattern = 'test/**/*_test.rb'
-      TTNT::TestTask.new(t)
-      @rake_task = t # save for testing purpose
+      @ttnt_task = TTNT::TestTask.new(t)
     }
   end
 
