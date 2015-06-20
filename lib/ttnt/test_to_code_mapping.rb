@@ -8,9 +8,8 @@ require 'set'
 
 module TTNT
   class TestToCodeMapping
-    def initialize(repo, sha)
+    def initialize(repo)
       @repo = repo
-      @sha = sha
       raise 'Not in a git repository' unless @repo
     end
 

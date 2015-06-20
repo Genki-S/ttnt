@@ -23,7 +23,7 @@ module TTNT
     # @return [Set] a set of tests that might be affected by changes in base_sha...target_sha
     def select_tests
       tests = Set.new
-      mapping = TTNT::TestToCodeMapping.new(@repo, @base_obj.oid)
+      mapping = TTNT::TestToCodeMapping.new(@repo)
       # TODO: if mapping is not found (ttnt-anchor has not been run)
 
       diff = @base_obj.diff(@target_obj)
