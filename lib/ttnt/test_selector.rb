@@ -10,9 +10,7 @@ module TTNT
 
       # Base should be the commit `ttnt:anchor` has run on.
       # NOT the one test-to-code mapping was commited to.
-      ttnt_tree = @repo.lookup(@repo.lookup(base_sha).tree['.ttnt'][:oid])
-      base_sha = @repo.lookup(ttnt_tree['commit_obj.txt'][:oid]).content
-      @base_obj = @repo.lookup(base_sha)
+      @base_obj = find_anchored_commit(base_sha)
     end
 
     def select_tests
@@ -40,6 +38,14 @@ module TTNT
         end
       end
       tests.delete(nil)
+    end
+
+    private
+
+    def find_anchored_commit(sha)
+      ttnt_tree = @repo.lookup(@repo.lookup(sha).tree['.ttnt'][:oid])
+      anchored_sha = @repo.lookup(ttnt_tree['commit_obj.txt'][:oid]).content
+      @repo.lookup(anchored_sha)
     end
   end
 end
