@@ -24,6 +24,10 @@ module TTNT
       define_tasks
     end
 
+    def repo
+      @repo ||= Rugged::Repository.discover('.')
+    end
+
     # Task definitions are taken from Rake::TestTask
     # https://github.com/ruby/rake/blob/e644af3/lib/rake/testtask.rb#L98-L112
     def define_tasks
@@ -38,7 +42,6 @@ module TTNT
     def define_run_task
       desc @run_description
       task 'run' do
-        repo = Rugged::Repository.discover('.')
         target_sha = ENV['TARGET_SHA'] || repo.head.target_id
         base_sha = ENV['BASE_SHA'] || repo.merge_base(target_sha, repo.rev_parse('master'))
         ts = TTNT::TestSelector.new(repo, target_sha, base_sha)
