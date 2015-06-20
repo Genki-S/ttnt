@@ -15,7 +15,7 @@ module TTNT
 
     def append_from_coverage(test, coverage)
       spectra = normalize_path(select_project_files(spectra_from_coverage(coverage)))
-      save_mapping(test: test, spectra: spectra)
+      update_mapping_entry(test: test, spectra: spectra)
     end
 
     def read_mapping
@@ -77,7 +77,7 @@ module TTNT
       spectra
     end
 
-    def save_mapping(test:, spectra:)
+    def update_mapping_entry(test:, spectra:)
       dir = base_savedir
       unless File.directory?(dir)
         FileUtils.mkdir_p(dir)
