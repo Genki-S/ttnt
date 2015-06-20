@@ -3,7 +3,11 @@ require 'rugged'
 require_relative './test_to_code_mapping'
 
 module TTNT
+  # Select tests using git information and {TestToCodeMapping}
   class TestSelector
+    # @param repo [Rugged::Reposiotry] repository of the project
+    # @param target_sha [String] sha of the target object
+    # @param base_sha [String] sha of the base object
     def initialize(repo, target_sha, base_sha)
       @repo = repo
       @target_obj = @repo.lookup(target_sha)
@@ -13,6 +17,10 @@ module TTNT
       @base_obj = find_anchored_commit(base_sha)
     end
 
+    # Select tests using differences in base_sha...target_sha and the latest
+    # TestToCodeMapping committed to base_sha
+    #
+    # @return [Set] a set of tests that might be affected by changes in base_sha...target_sha
     def select_tests
       tests = Set.new
       mapping = TTNT::TestToCodeMapping.new(@repo, @base_obj.oid)
@@ -42,6 +50,9 @@ module TTNT
 
     private
 
+    # Find the commit `rake ttnt:test:anchor` has been run on.
+    #
+    # @param sha [String] sha of a commit from which search starts
     def find_anchored_commit(sha)
       ttnt_tree = @repo.lookup(@repo.lookup(sha).tree['.ttnt'][:oid])
       anchored_sha = @repo.lookup(ttnt_tree['commit_obj.txt'][:oid]).content
