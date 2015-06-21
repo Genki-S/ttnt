@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/Genki-S/ttnt.svg?branch=master)](https://travis-ci.org/Genki-S/ttnt)
 [![Coverage Status](https://coveralls.io/repos/Genki-S/ttnt/badge.svg?branch=master)](https://coveralls.io/r/Genki-S/ttnt?branch=master)
+[![Code Climate](https://codeclimate.com/github/Genki-S/ttnt/badges/gpa.svg)](https://codeclimate.com/github/Genki-S/ttnt)
 
 Developing under [Google Summer of Code 2015](http://www.google-melange.com/gsoc/homepage/google/gsoc2015) with mentoring organization [Ruby on Rails](http://rubyonrails.org/).
 
