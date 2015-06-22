@@ -30,6 +30,8 @@ module TTNT
       define_tasks
     end
 
+    private
+
     # Git repository discovered from current directory
     #
     # @return [Rugged::Reposiotry]
