@@ -18,7 +18,7 @@ module TTNT
     end
 
     # Select tests using differences in base_sha...target_sha and the latest
-    # TestToCodeMapping committed to base_sha
+    # TestToCodeMapping committed to base_sha.
     #
     # @return [Set] a set of tests that might be affected by changes in base_sha...target_sha
     def select_tests

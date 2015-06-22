@@ -3,7 +3,7 @@ require 'json'
 require 'set'
 
 module TTNT
-  # Mapping from test file to executed code (i.e. coverage without execution count)
+  # Mapping from test file to executed code (i.e. coverage without execution count).
   #
   # Terminologies:
   #   spectra: { filename => [line, numbers, executed], ... }
@@ -18,7 +18,7 @@ module TTNT
 
     # Append the new mapping to test-to-code mapping file.
     #
-    # @param test [String] test file to which the coverage data is produced
+    # @param test [String] test file for which the coverage data is produced
     # @param coverage [Hash] coverage data generated using `Coverage.start` and `Coverage.result`
     # @return [void]
     def append_from_coverage(test, coverage)
@@ -55,9 +55,9 @@ module TTNT
       tests
     end
 
-    # Save sha as the commit object anchoring has been run on
+    # Save commit's sha anchoring has been run on.
     #
-    # @param sha [String] sha of the commit anchoring has been run on
+    # @param sha [String] commit's sha anchoring has been run on
     # @return [void]
     # FIXME: this might not be the responsibility for this class
     def save_commit_info(sha)
