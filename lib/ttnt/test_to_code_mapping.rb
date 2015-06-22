@@ -22,7 +22,7 @@ module TTNT
     # @param coverage [Hash] coverage data generated using `Coverage.start` and `Coverage.result`
     # @return [void]
     def append_from_coverage(test, coverage)
-      spectra = normalize_path(select_project_files(spectra_from_coverage(coverage)))
+      spectra = normalize_paths(select_project_files(spectra_from_coverage(coverage)))
       update_mapping_entry(test: test, spectra: spectra)
     end
 
@@ -81,7 +81,7 @@ module TTNT
     #
     # @param spectra [Hash] spectra data
     # @return [Hash] spectra whose keys (file names) are normalized
-    def normalize_path(spectra)
+    def normalize_paths(spectra)
       spectra.map do |filename, lines|
         [normalized_path(filename), lines]
       end.to_h
