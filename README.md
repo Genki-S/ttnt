@@ -114,31 +114,7 @@ $ rake ttnt:my_test_name:run
 
 This gem can only produce test-to-code mapping "from a single test file to code lines executed"
 (not fine-grained mapping "from a single test **case** to code lines executed").
-This is due to these limitation of Ruby coverage library:
-
-- All the files you want to track coverage should be loaded **after** `Coverage.start` or coverage won't be tracked at all (meaning you cannot do `Coverage.start` multiple times effectively, e.g. in test setup)
-- When `Coverage.result` is called, all the stored coverage results are lost (when calling `Coverage.result` twice, second call returns nothing)
-
-So, this desired approach does not work:
-
-1. setup coverage (`Coverage.start`)
-2. run a single test case
-3. save coverage data (`Coverage.result`)
-4. repeat 1-3 for all test cases
-
-Explanation:
-
-Say `foo_test.rb` has 2 test cases, this file is loaded upon the execution of first test case on step 2.
-However when running the second test case, `foo_test.rb` is already loaded so `Coverage.start` on step 1 does not take effect.
-
-So currently coverage is recorded in the following step:
-
-1. setup coverage (`Coverage.start`)
-2. run a single test **file**
-3. save coverage data (`Coverage.result`)
-4. repeat 1-3 for all test **files**
-
-Thus, we can guarantee that each test file is loaded after `Coverage.start`.
+This is due to the way Ruby's coverage library works. Details are covered in [my proposal](https://github.com/Genki-S/gsoc2015/blob/master/proposal.md#2-run-each-test-case-from-scratch-requiring-all-files-for-every-run).
 
 ## Development
 
