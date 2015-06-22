@@ -1,5 +1,7 @@
-require 'coveralls'
-Coveralls.wear!
+unless ENV['ANCHOR_TASK']
+  require 'coveralls'
+  Coveralls.wear!
+end
 
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 require 'ttnt'

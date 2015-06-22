@@ -80,6 +80,11 @@ module TTNT
     def define_anchor_task
       desc @anchor_description
       task 'anchor' do
+        # In order to make it possible to stop coverage services like Coveralls
+        # which interferes with ttnt/anchor because both use coverage library.
+        # See test/test_helper.rb
+        ENV['ANCHOR_TASK'] = '1'
+
         Rake::FileUtilsExt.verbose(@rake_testtask.verbose) do
           # Make it possible to require files in this gem
           gem_root = File.expand_path('../..', __FILE__)
