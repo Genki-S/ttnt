@@ -10,6 +10,9 @@ module TTNT
   class TestTask
     include Rake::DSL
 
+    GIT_AUTHOR_NAME = 'TTNT Developer'.freeze
+    GIT_AUTHOR_EMAIL = 'genki.sugimoto.jp@gmail.com'.freeze
+
     # An instance of `Rake::TestTask` passed when TTNT::TestTask is initialized
     attr_accessor :rake_testtask
 
@@ -104,6 +107,9 @@ module TTNT
             run_ruby "#{args} #{test_file}"
           end
         end
+
+        commit_ttnt_files!
+        print_finish_message
       end
     end
 
@@ -119,6 +125,37 @@ module TTNT
             "[ruby #{args}]"
         end
       end
+    end
+
+    # Create a commit which registers test-to-code mapping file to the repository.
+    #
+    # @return [void]
+    def commit_ttnt_files!
+      author = {
+        name: GIT_AUTHOR_NAME,
+        email: GIT_AUTHOR_EMAIL,
+        time: Time.now
+      }
+      index = repo.index
+      index.read_tree(repo.head.target.tree)
+      index.add('.ttnt/test_to_code_mapping.json')
+      tree = index.write_tree
+      Rugged::Commit.create(repo,
+                            author: author,
+                            message: 'Save TTNT generated files',
+                            committer: author,
+                            parents: repo.empty? ? [] : [repo.head.target].compact,
+                            tree: tree,
+                            update_ref: 'HEAD')
+    end
+
+    def print_finish_message
+      lines = [
+        'test-to-code mapping is created and commited to your git repository.',
+        'Please note that changing the commit order by rebasing might cause',
+        'unexpected behavior afterwards.'
+      ].map { |l| l.colorize(:yellow) }
+      warn(*lines)
     end
 
     def print_dirty_workdir_warning
