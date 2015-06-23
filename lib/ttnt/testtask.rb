@@ -65,10 +65,10 @@ module TTNT
         if tests.empty?
           STDERR.puts 'No test selected.'
         else
-          # TODO: actually run tests
-          tests.each do |test|
-            puts test
-          end
+          args =
+            "#{@rake_testtask.ruby_opts_string} #{@rake_testtask.run_code} " +
+            "#{tests.to_a.join(' ')} #{@rake_testtask.option_list}"
+          run_ruby args
         end
       end
     end
