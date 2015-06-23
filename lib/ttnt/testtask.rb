@@ -83,10 +83,9 @@ module TTNT
         Rake::FileUtilsExt.verbose(@rake_testtask.verbose) do
           # Make it possible to require files in this gem
           gem_root = File.expand_path('../..', __FILE__)
-          args = "-I#{gem_root}"
-
-          # TODO: properly regard run options defined for Rake::TestTask
-          args += " -I#{@rake_testtask.libs.join(':')} -r ttnt/anchor"
+          args =
+            "-I#{gem_root} -r ttnt/anchor " +
+            "#{@rake_testtask.ruby_opts_string}"
 
           test_files = Rake::FileList[@rake_testtask.pattern].compact
           test_files += @test_files.to_a if @test_files
