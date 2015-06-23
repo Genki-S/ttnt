@@ -22,8 +22,7 @@ class TestTaskTest < Minitest::Test
       "`ttnt:#{@name}:run` task should be defined"
   end
 
-  def test_attributes
-    assert_equal @rake_task.libs, @ttnt_task.libs
-    assert_equal @rake_task.pattern, @ttnt_task.pattern
+  def test_composing_rake_testtask
+    assert_equal @rake_task, @ttnt_task.rake_testtask
   end
 end
