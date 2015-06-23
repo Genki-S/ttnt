@@ -11,19 +11,19 @@ module TTNT
 
     # Create an instance of TTNT::TestTask and define TTNT rake tasks.
     #
-    # @param rake_test_task [Rake::TestTask] an instance of Rake::TestTask after user configuration is done
-    def initialize(rake_test_task)
-      attributes = rake_test_task.instance_variables
+    # @param rake_testtask [Rake::TestTask] an instance of Rake::TestTask after user configuration is done
+    def initialize(rake_testtask)
+      attributes = rake_testtask.instance_variables
       attributes.map! { |attribute| attribute[1..-1] }
 
       attributes.each do |ivar|
         self.class.class_eval("attr_accessor :#{ivar}")
-        if rake_test_task.respond_to?(ivar)
-          send(:"#{ivar}=", rake_test_task.send(:"#{ivar}"))
+        if rake_testtask.respond_to?(ivar)
+          send(:"#{ivar}=", rake_testtask.send(:"#{ivar}"))
         end
       end
       # Since test_files is not exposed in Rake::TestTask
-      @test_files = rake_test_task.instance_variable_get('@test_files')
+      @test_files = rake_testtask.instance_variable_get('@test_files')
 
       @anchor_description = 'Generate test-to-code mapping' + (@name == :test ? '' : " for #{@name}")
       @run_description = 'Run selected tests' + (@name == :test ? '' : "for #{@name}")
