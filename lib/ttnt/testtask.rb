@@ -90,15 +90,22 @@ module TTNT
           test_files = Rake::FileList[@rake_testtask.pattern].compact
           test_files += @test_files.to_a if @test_files
           test_files.each do |test_file|
-            ruby "#{args} #{test_file}" do |ok, status|
-              if !ok && status.respond_to?(:signaled?) && status.signaled?
-                raise SignalException.new(status.termsig)
-              elsif !ok
-                fail "Command failed with status (#{status.exitstatus}): " +
-                  "[ruby #{args}]"
-              end
-            end
+            run_ruby "#{args} #{test_file}"
           end
+        end
+      end
+    end
+
+    # Run ruby process with given args
+    #
+    # @param args [String] argument to pass to ruby
+    def run_ruby(args)
+      ruby "#{args}" do |ok, status|
+        if !ok && status.respond_to?(:signaled?) && status.signaled?
+          raise SignalException.new(status.termsig)
+        elsif !ok
+          fail "Command failed with status (#{status.exitstatus}): " +
+            "[ruby #{args}]"
         end
       end
     end
