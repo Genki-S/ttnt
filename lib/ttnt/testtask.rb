@@ -9,24 +9,19 @@ module TTNT
   class TestTask
     include Rake::DSL
 
+    # An instance of `Rake::TestTask` passed when TTNT::TestTask is initialized
+    attr_accessor :rake_testtask
+
     # Create an instance of TTNT::TestTask and define TTNT rake tasks.
     #
-    # @param rake_test_task [Rake::TestTask] an instance of Rake::TestTask after user configuration is done
-    def initialize(rake_test_task)
-      attributes = rake_test_task.instance_variables
-      attributes.map! { |attribute| attribute[1..-1] }
-
-      attributes.each do |ivar|
-        self.class.class_eval("attr_accessor :#{ivar}")
-        if rake_test_task.respond_to?(ivar)
-          send(:"#{ivar}=", rake_test_task.send(:"#{ivar}"))
-        end
-      end
+    # @param rake_testtask [Rake::TestTask] an instance of Rake::TestTask after user configuration is done
+    def initialize(rake_testtask)
+      @rake_testtask = rake_testtask
       # Since test_files is not exposed in Rake::TestTask
-      @test_files = rake_test_task.instance_variable_get('@test_files')
+      @test_files = @rake_testtask.instance_variable_get('@test_files')
 
-      @anchor_description = 'Generate test-to-code mapping' + (@name == :test ? '' : " for #{@name}")
-      @run_description = 'Run selected tests' + (@name == :test ? '' : "for #{@name}")
+      @anchor_description = 'Generate test-to-code mapping' + (@rake_testtask.name == :test ? '' : " for #{@rake_testtask.name}")
+      @run_description = 'Run selected tests' + (@rake_testtask.name == :test ? '' : "for #{@rake_testtask.name}")
       define_tasks
     end
 
@@ -46,7 +41,7 @@ module TTNT
       # Task definitions are taken from Rake::TestTask
       # https://github.com/ruby/rake/blob/e644af3/lib/rake/testtask.rb#L98-L112
       namespace :ttnt do
-        namespace @name do
+        namespace @rake_testtask.name do
           define_run_task
           define_anchor_task
         end
@@ -70,10 +65,10 @@ module TTNT
         if tests.empty?
           STDERR.puts 'No test selected.'
         else
-          # TODO: actually run tests
-          tests.each do |test|
-            puts test
-          end
+          args =
+            "#{@rake_testtask.ruby_opts_string} #{@rake_testtask.run_code} " +
+            "#{tests.to_a.join(' ')} #{@rake_testtask.option_list}"
+          run_ruby args
         end
       end
     end
@@ -85,26 +80,32 @@ module TTNT
     def define_anchor_task
       desc @anchor_description
       task 'anchor' do
-        Rake::FileUtilsExt.verbose(@verbose) do
+        Rake::FileUtilsExt.verbose(@rake_testtask.verbose) do
           # Make it possible to require files in this gem
           gem_root = File.expand_path('../..', __FILE__)
-          args = "-I#{gem_root}"
+          args =
+            "-I#{gem_root} -r ttnt/anchor " +
+            "#{@rake_testtask.ruby_opts_string}"
 
-          # TODO: properly regard run options defined for Rake::TestTask
-          args += " -I#{@libs.join(':')} -r ttnt/anchor"
-
-          test_files = Rake::FileList[@pattern].compact
+          test_files = Rake::FileList[@rake_testtask.pattern].compact
           test_files += @test_files.to_a if @test_files
           test_files.each do |test_file|
-            ruby "#{args} #{test_file}" do |ok, status|
-              if !ok && status.respond_to?(:signaled?) && status.signaled?
-                raise SignalException.new(status.termsig)
-              elsif !ok
-                fail "Command failed with status (#{status.exitstatus}): " +
-                  "[ruby #{args}]"
-              end
-            end
+            run_ruby "#{args} #{test_file}"
           end
+        end
+      end
+    end
+
+    # Run ruby process with given args
+    #
+    # @param args [String] argument to pass to ruby
+    def run_ruby(args)
+      ruby "#{args}" do |ok, status|
+        if !ok && status.respond_to?(:signaled?) && status.signaled?
+          raise SignalException.new(status.termsig)
+        elsif !ok
+          fail "Command failed with status (#{status.exitstatus}): " +
+            "[ruby #{args}]"
         end
       end
     end
