@@ -6,15 +6,10 @@ module TTNT
   # Select tests using git information and {TestToCodeMapping}
   class TestSelector
     # @param repo [Rugged::Reposiotry] repository of the project
-    # @param target_sha [String] sha of the target object
-    # @param base_sha [String] sha of the base object
-    def initialize(repo, target_sha, base_sha)
+    def initialize(repo)
       @repo = repo
-      @target_obj = @repo.lookup(target_sha)
-
-      # Base should be the commit `ttnt:anchor` has run on.
-      # NOT the one test-to-code mapping was commited to.
-      @base_obj = find_anchored_commit(base_sha)
+      @target_obj = @repo.head.target
+      @base_obj = find_anchoring_commit
     end
 
     # Select tests using differences in base_sha...target_sha and the latest
@@ -23,7 +18,7 @@ module TTNT
     # @return [Set] a set of tests that might be affected by changes in base_sha...target_sha
     def select_tests
       tests = Set.new
-      mapping = TTNT::TestToCodeMapping.new(@repo)
+      mapping = TTNT::TestToCodeMapping.new(@repo, @base_obj.oid)
       # TODO: if mapping is not found (ttnt-anchor has not been run)
 
       diff = @base_obj.diff(@target_obj)
@@ -50,13 +45,34 @@ module TTNT
 
     private
 
-    # Find the commit `rake ttnt:test:anchor` has been run on.
+    # Walk through the history starting from HEAD and find the nearest
+    # anchoring commit. Basically the same as doing
+    # `git log -- .ttnt/test_to_code_mapping.json` and take the first commit.
     #
-    # @param sha [String] sha of a commit from which search starts
-    def find_anchored_commit(sha)
-      ttnt_tree = @repo.lookup(@repo.lookup(sha).tree['.ttnt'][:oid])
-      anchored_sha = @repo.lookup(ttnt_tree['commit_obj.txt'][:oid]).content
-      @repo.lookup(anchored_sha)
+    # @return [Rugged::Commit] the latest commit mapping file is committed
+    def find_anchoring_commit
+      head_oid = lookup_mapping_file(@repo.head.target.tree)[:oid]
+      walker = Rugged::Walker.new(@repo)
+      walker.push(@repo.head.target.oid)
+      prev_commit = nil
+      found = nil
+      walker.each do |commit|
+        obj = lookup_mapping_file(commit.tree)
+        if obj.nil? || obj[:oid] != head_oid
+          found = prev_commit
+          break
+        end
+        prev_commit = commit
+      end
+      found
+    end
+
+    def lookup_mapping_file(tree)
+      begin
+        @repo.lookup(tree['.ttnt'][:oid])['test_to_code_mapping.json']
+      rescue
+        nil
+      end
     end
   end
 end

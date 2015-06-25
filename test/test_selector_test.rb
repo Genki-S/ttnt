@@ -3,16 +3,14 @@ require 'ttnt/test_selector'
 
 class TestSelectorTest < TTNT::TestCase
   def setup
-    target_sha = @repo.branches['change_fizz'].target.oid
-    master_sha = @repo.branches['master'].target.oid
-    base_sha = @repo.merge_base(target_sha, master_sha)
-    @selector = TTNT::TestSelector.new(@repo, target_sha, base_sha)
+    @repo.checkout('change_fizz')
+    @selector = TTNT::TestSelector.new(@repo)
   end
 
   def test_base_obj_selection
-    # Commit on which `rake ttnt:anchor` is invoked. Not the one `.ttnt` files are committed
+    # Commit on which mapping file is committed
     assert_equal @selector.instance_variable_get('@base_obj').oid,
-      "7683a5d271c6829567d347b927dcf0625f3ce8f5"
+      "0de92248f0a16e27d7b017ff61428163bb136cbc"
   end
 
   def test_selects_tests
