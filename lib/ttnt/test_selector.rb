@@ -6,11 +6,9 @@ module TTNT
   # Select tests using git information and {TestToCodeMapping}
   class TestSelector
     # @param repo [Rugged::Reposiotry] repository of the project
-    # @param target_sha [String] sha of the target object
-    # @param base_sha [String] sha of the base object
-    def initialize(repo, target_sha, base_sha)
+    def initialize(repo)
       @repo = repo
-      @target_obj = @repo.lookup(target_sha)
+      @target_obj = @repo.head.target
       @base_obj = find_anchoring_commit
     end
 

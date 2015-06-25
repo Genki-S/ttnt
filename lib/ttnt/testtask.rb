@@ -62,9 +62,7 @@ module TTNT
     def define_run_task
       desc @run_description
       task 'run' do
-        target_sha = ENV['TARGET_SHA'] || repo.head.target_id
-        base_sha = ENV['BASE_SHA'] || repo.merge_base(target_sha, repo.rev_parse('master'))
-        ts = TTNT::TestSelector.new(repo, target_sha, base_sha)
+        ts = TTNT::TestSelector.new(repo)
         tests = ts.select_tests
         if tests.empty?
           STDERR.puts 'No test selected.'
