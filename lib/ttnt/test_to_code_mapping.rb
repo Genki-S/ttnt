@@ -55,18 +55,6 @@ module TTNT
       tests
     end
 
-    # Save commit's sha anchoring has been run on.
-    #
-    # @param sha [String] commit's sha anchoring has been run on
-    # @return [void]
-    # FIXME: this might not be the responsibility for this class
-    def save_commit_info(sha)
-      unless File.directory?(File.dirname(commit_info_file))
-        FileUtils.mkdir_p(File.dirname(commit_info_file))
-      end
-      File.write(commit_info_file, sha)
-    end
-
     private
 
     # Convert absolute path to relative path from the project (git repository) root.
@@ -138,13 +126,6 @@ module TTNT
     # @return [String]
     def mapping_file
       "#{base_savedir}/test_to_code_mapping.json"
-    end
-
-    # File name to save commit object on which anchoring has been run
-    #
-    # @return [String]
-    def commit_info_file
-      "#{base_savedir}/commit_obj.txt"
     end
   end
 end

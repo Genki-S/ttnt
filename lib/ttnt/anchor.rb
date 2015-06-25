@@ -12,5 +12,4 @@ at_exit do
   sha = repo.head.target_id
   mapping = TTNT::TestToCodeMapping.new(repo)
   mapping.append_from_coverage(test_file, Coverage.result)
-  mapping.save_commit_info(sha)
 end
