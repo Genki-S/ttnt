@@ -11,8 +11,11 @@ module TTNT
   class TestToCodeMapping
     # @param repo [Rugged::Reposiotry] repository to save test-to-code mapping
     #   (only repo.workdir is used to determine where to save the mapping file)
-    def initialize(repo)
+    # @param sha [String] the sha of commit from which mapping should be read
+    #   (nil means mapping should be read from current working tree)
+    def initialize(repo, sha = nil)
       @repo = repo
+      @sha = sha
       raise 'Not in a git repository' unless @repo
     end
 
@@ -30,7 +33,10 @@ module TTNT
     #
     # @return [Hash] test-to-code mapping
     def read_mapping
-      if File.exists?(mapping_file)
+      if @sha
+        blob = @repo.lookup(@repo.lookup(@repo.lookup(@sha).tree['.ttnt'][:oid])['test_to_code_mapping.json'][:oid])
+        JSON.parse(blob.content)
+      elsif File.exists?(mapping_file)
         JSON.parse(File.read(mapping_file))
       else
         {}
@@ -106,6 +112,7 @@ module TTNT
     # @param spectra [Hash] spectra data for when executing the test file
     # @return [void]
     def update_mapping_entry(test:, spectra:)
+      raise 'Cannot write to mapping read from git history' if @sha
       dir = base_savedir
       unless File.directory?(dir)
         FileUtils.mkdir_p(dir)
