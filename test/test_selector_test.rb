@@ -12,7 +12,7 @@ class TestSelectorTest < TTNT::TestCase
   def test_base_obj_selection
     # Commit on which `rake ttnt:anchor` is invoked. Not the one `.ttnt` files are committed
     assert_equal @selector.instance_variable_get('@base_obj').oid,
-      "7683a5d271c6829567d347b927dcf0625f3ce8f5"
+      "bf1931131cf0d01c1a02b8f08085b90c9a92acd4"
   end
 
   def test_selects_tests
