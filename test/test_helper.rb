@@ -5,6 +5,7 @@ end
 
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 require 'ttnt'
+require 'helpers/git_helper'
 
 require 'rugged'
 require 'minitest/autorun'
@@ -29,9 +30,12 @@ module TTNT
       @tmpdir = Dir.mktmpdir('ttnt_repository')
       @repo = Rugged::Repository.init_at(@tmpdir)
       copy_fixture('Rakefile', "#{@tmpdir}/Rakefile")
+      GitHelper.commit_am(@repo, 'Add Rakefile')
       copy_fixture('fizzbuzz.rb', "#{@tmpdir}/lib/fizzbuzz.rb")
+      GitHelper.commit_am(@repo, 'Add fizzbuzz code')
       copy_fixture('fizz_test.rb', "#{@tmpdir}/test/fizz_test.rb")
       copy_fixture('buzz_test.rb', "#{@tmpdir}/test/buzz_test.rb")
+      GitHelper.commit_am(@repo, 'Add fizzbuzz tests')
     end
 
     def copy_fixture(src, dest)
