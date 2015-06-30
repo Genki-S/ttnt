@@ -6,11 +6,12 @@ end
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 require 'ttnt'
 
+require 'rugged'
 require 'minitest/autorun'
 
 module TTNT
   class TestCase < Minitest::Test
-    FIZZBUZZ_FIXTURE_DIR = File.expand_path('../fixtures/repositories/fizzbuzz', __FILE__).freeze
+    FIXTURE_DIR = File.expand_path('../fixtures', __FILE__).freeze
 
     def before_setup
       super
@@ -25,14 +26,19 @@ module TTNT
     private
 
     def prepare_git_repository
-      @tmpdir = Dir.mktmpdir('ttnt_repo')
-      FileUtils.cp_r(FIZZBUZZ_FIXTURE_DIR, @tmpdir)
-      @repodir = "#{@tmpdir}/fizzbuzz"
-      Dir.chdir(@repodir) do
-        FileUtils.rm('.git')
-        File.rename('.gitted', '.git') if File.exist?(".gitted")
+      @tmpdir = Dir.mktmpdir('ttnt_repository')
+      @repo = Rugged::Repository.init_at(@tmpdir)
+      copy_fixture('Rakefile', "#{@tmpdir}/Rakefile")
+      copy_fixture('fizzbuzz.rb', "#{@tmpdir}/lib/fizzbuzz.rb")
+      copy_fixture('fizz_test.rb', "#{@tmpdir}/test/fizz_test.rb")
+      copy_fixture('buzz_test.rb', "#{@tmpdir}/test/buzz_test.rb")
+    end
+
+    def copy_fixture(src, dest)
+      unless File.directory?(File.dirname(dest))
+        FileUtils.mkdir_p(File.dirname(dest))
       end
-      @repo = Rugged::Repository.new(@repodir)
+      FileUtils.cp("#{FIXTURE_DIR}/#{src}", dest)
     end
   end
 end
