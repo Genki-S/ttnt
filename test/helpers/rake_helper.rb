@@ -9,9 +9,11 @@ module TTNT
       Rake.application.load_rakefile
     end
 
-    def self.rake(task)
-      result = capture { Rake::Task[task].execute }
-      block_given? ? yield(result) : result
+    def self.rake(task, dir: Dir.pwd)
+      Dir.chdir(dir) do
+        result = capture { Rake::Task[task].execute }
+        block_given? ? yield(result) : result
+      end
     end
 
     def self.capture
