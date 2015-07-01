@@ -108,9 +108,6 @@ module TTNT
       ruby "#{args}" do |ok, status|
         if !ok && status.respond_to?(:signaled?) && status.signaled?
           raise SignalException.new(status.termsig)
-        elsif !ok
-          fail "Command failed with status (#{status.exitstatus}): " +
-            "[ruby #{args}]"
         end
       end
     end
