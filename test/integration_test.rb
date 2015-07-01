@@ -25,7 +25,7 @@ module TTNT
     def test_fizz_test_is_selected
       @repo.checkout('change_fizz')
       output = RakeHelper.rake('ttnt:test:run', dir: @repo.workdir)
-      assert_match /1 runs, 1 assertions, 1 failures/, output[:stdout]
+      assert_match '1 runs, 1 assertions, 1 failures', output[:stdout]
     end
   end
 end
