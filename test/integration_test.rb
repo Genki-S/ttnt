@@ -5,7 +5,7 @@ module TTNT
   class IntegrationTest < TTNT::TestCase
     def test_saving_anchored_commit
       anchored_sha = @repo.head.target_id
-      RakeHelper.rake('ttnt:test:anchor', dir: @repo.workdir)
+      rake('ttnt:test:anchor')
       saved = File.read("#{@repo.workdir}/.ttnt/commit_obj.txt")
       assert_equal anchored_sha, saved
     end
@@ -18,13 +18,13 @@ module TTNT
     end
 
     def test_no_test_is_selected
-      output = RakeHelper.rake('ttnt:test:run', dir: @repo.workdir)
+      output = rake('ttnt:test:run')
       assert_equal "", output[:stdout]
     end
 
     def test_fizz_test_is_selected
       @repo.checkout('change_fizz')
-      output = RakeHelper.rake('ttnt:test:run', dir: @repo.workdir)
+      output = rake('ttnt:test:run')
       assert_match '1 runs, 1 assertions, 1 failures', output[:stdout]
     end
   end

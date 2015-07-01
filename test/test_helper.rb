@@ -15,6 +15,9 @@ module TTNT
   class TestCase < Minitest::Test
     FIXTURE_DIR = File.join(__dir__, 'fixtures')
 
+    include GitHelper
+    include RakeHelper
+
     def before_setup
       super
       prepare_git_repository
@@ -31,32 +34,32 @@ module TTNT
       @tmpdir = Dir.mktmpdir('ttnt_repository')
       @repo = Rugged::Repository.init_at(@tmpdir)
       populate_with_fixtures
-      RakeHelper.load_rakefile("#{@tmpdir}/Rakefile")
+      load_rakefile("#{@tmpdir}/Rakefile")
       anchor_and_commit
       make_change_fizz_branch
     end
 
     def populate_with_fixtures
       copy_fixture('Rakefile', "#{@tmpdir}/Rakefile")
-      GitHelper.commit_am(@repo, 'Add Rakefile')
+      git_commit_am('Add Rakefile')
       copy_fixture('fizzbuzz.rb', "#{@tmpdir}/lib/fizzbuzz.rb")
-      GitHelper.commit_am(@repo, 'Add fizzbuzz code')
+      git_commit_am('Add fizzbuzz code')
       copy_fixture('fizz_test.rb', "#{@tmpdir}/test/fizz_test.rb")
       copy_fixture('buzz_test.rb', "#{@tmpdir}/test/buzz_test.rb")
-      GitHelper.commit_am(@repo, 'Add fizzbuzz tests')
+      git_commit_am('Add fizzbuzz tests')
     end
 
     def anchor_and_commit
       @anchored_sha = @repo.head.target_id
-      RakeHelper.rake('ttnt:test:anchor', dir: @repo.workdir)
-      GitHelper.commit_am(@repo, 'Add TTNT generated files')
+      rake('ttnt:test:anchor')
+      git_commit_am('Add TTNT generated files')
     end
 
     def make_change_fizz_branch
-      GitHelper.checkout_b(@repo, 'change_fizz')
+      git_checkout_b('change_fizz')
       fizzbuzz_file = "#{@repo.workdir}/lib/fizzbuzz.rb"
       File.write(fizzbuzz_file, File.read(fizzbuzz_file).gsub(/"fizz"$/, '"foo"'))
-      GitHelper.commit_am(@repo, 'Change fizz code')
+      git_commit_am('Change fizz code')
       @repo.checkout('master')
     end
 
