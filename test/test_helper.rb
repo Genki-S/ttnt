@@ -13,7 +13,7 @@ require 'minitest/autorun'
 
 module TTNT
   class TestCase < Minitest::Test
-    FIXTURE_DIR = File.expand_path('../fixtures', __FILE__).freeze
+    FIXTURE_DIR = File.join(__dir__, 'fixtures')
 
     def before_setup
       super
