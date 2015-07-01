@@ -69,5 +69,27 @@ module TTNT
       end
       FileUtils.cp("#{FIXTURE_DIR}/#{src}", dest)
     end
+
+    def capture
+      captured_stream     = Tempfile.new("stdout")
+      origin_stream       = $stdout.dup
+      captured_stream_err = Tempfile.new("stderr")
+      origin_stream_err   = $stderr.dup
+      $stdout.reopen(captured_stream)
+      $stderr.reopen(captured_stream_err)
+
+      yield
+
+      $stdout.rewind
+      $stderr.rewind
+      return { stdout: captured_stream.read, stderr: captured_stream_err.read }
+    ensure
+      captured_stream.close
+      captured_stream.unlink
+      captured_stream_err.close
+      captured_stream_err.unlink
+      $stdout.reopen(origin_stream)
+      $stderr.reopen(origin_stream_err)
+    end
   end
 end
