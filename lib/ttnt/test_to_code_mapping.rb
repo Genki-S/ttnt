@@ -30,7 +30,7 @@ module TTNT
     #
     # @return [Hash] test-to-code mapping
     def read_mapping
-      if File.exists?(mapping_file)
+      if File.exist?(mapping_file)
         JSON.parse(File.read(mapping_file))
       else
         {}
