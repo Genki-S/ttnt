@@ -39,8 +39,6 @@ module TTNT
               tests += mapping.get_tests(file: file, lineno: line.new_lineno)
             when :deletion
               tests += mapping.get_tests(file: file, lineno: line.old_lineno)
-            else
-              # do nothing
             end
           end
         end
