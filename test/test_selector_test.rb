@@ -7,7 +7,8 @@ module TTNT
       target_sha = @repo.branches['change_fizz'].target.oid
       master_sha = @repo.branches['master'].target.oid
       base_sha = @repo.merge_base(target_sha, master_sha)
-      @selector = TTNT::TestSelector.new(@repo, target_sha, base_sha)
+      @test_files = Rake::FileList['test/**/*_test.rb']
+      @selector = TTNT::TestSelector.new(@repo, target_sha, base_sha, @test_files)
     end
 
     def test_base_obj_selection
@@ -27,7 +28,7 @@ module TTNT
       target_sha = @repo.head.target_id
       master_sha = @repo.branches['master'].target.oid
       base_sha = @repo.merge_base(target_sha, master_sha)
-      selector = TTNT::TestSelector.new(@repo, target_sha, base_sha)
+      selector = TTNT::TestSelector.new(@repo, target_sha, base_sha, @test_files)
       assert_includes selector.select_tests, 'test/buzz_test.rb'
     end
   end

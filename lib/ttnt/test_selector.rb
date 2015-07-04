@@ -8,13 +8,16 @@ module TTNT
     # @param repo [Rugged::Reposiotry] repository of the project
     # @param target_sha [String] sha of the target object
     # @param base_sha [String] sha of the base object
-    def initialize(repo, target_sha, base_sha)
+    # @param test_files [#include?] candidate test files
+    def initialize(repo, target_sha, base_sha, test_files)
       @repo = repo
       @target_obj = @repo.lookup(target_sha)
 
       # Base should be the commit `ttnt:anchor` has run on.
       # NOT the one test-to-code mapping was commited to.
       @base_obj = find_anchored_commit(base_sha)
+
+      @test_files = test_files
     end
 
     # Select tests using differences in base_sha...target_sha and the latest
@@ -63,9 +66,7 @@ module TTNT
     #
     # @param filename [String]
     def test_file?(filename)
-      # Checking by file name convention.
-      # FIXME: Use Rake::TestTask to truly detect if it's a test file or not
-      filename =~ /^test\/.*\.rb/
+      @test_files.include?(filename)
     end
   end
 end
