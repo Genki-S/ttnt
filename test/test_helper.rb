@@ -21,9 +21,12 @@ module TTNT
     def before_setup
       super
       prepare_git_repository
+      @pwd = Dir.pwd
+      Dir.chdir(@repo.workdir)
     end
 
     def after_teardown
+      Dir.chdir(@pwd)
       FileUtils.remove_entry_secure(@tmpdir)
       super
     end
