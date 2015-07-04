@@ -25,6 +25,14 @@ module TTNT
       define_tasks
     end
 
+    # Returns array of test file names.
+    #   Unlike Rake::TestTask#file_list, patterns are expanded.
+    def expanded_file_list
+      test_files = Rake::FileList[@rake_testtask.pattern].compact
+      test_files += @test_files.to_a if @test_files
+      test_files
+    end
+
     private
 
     # Git repository discovered from current directory
@@ -92,8 +100,7 @@ module TTNT
             "-I#{gem_root} -r ttnt/anchor " +
             "#{@rake_testtask.ruby_opts_string}"
 
-          test_files = Rake::FileList[@rake_testtask.pattern].compact
-          test_files += @test_files.to_a if @test_files
+          test_files = expanded_file_list
           test_files.each do |test_file|
             run_ruby "#{args} #{test_file}"
           end
