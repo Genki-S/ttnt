@@ -29,6 +29,8 @@ module TTNT
       diff = @base_obj.diff(@target_obj)
       diff.each_patch do |patch|
         file = patch.delta.old_file[:path]
+        tests << file and next if test_file?(file)
+
         patch.each_hunk do |hunk|
           # TODO: think if this selection covers all possibilities
           hunk.each_line do |line|
@@ -55,6 +57,15 @@ module TTNT
       ttnt_tree = @repo.lookup(@repo.lookup(sha).tree['.ttnt'][:oid])
       anchored_sha = @repo.lookup(ttnt_tree['commit_obj.txt'][:oid]).content
       @repo.lookup(anchored_sha)
+    end
+
+    # Check if given file is a test file
+    #
+    # @param filename [String]
+    def test_file?(filename)
+      # Checking by file name convention.
+      # FIXME: Use Rake::TestTask to truly detect if it's a test file or not
+      filename =~ /^test\/.*\.rb/
     end
   end
 end
