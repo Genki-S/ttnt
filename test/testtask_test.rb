@@ -11,6 +11,7 @@ class TestTaskTest < Minitest::Test
       t.name = @name
       t.libs << 'test'
       t.pattern = 'test/**/*_test.rb'
+      t.test_files = FileList['test/dummy_test.rb']
       @ttnt_task = TTNT::TestTask.new(t)
     }
   end
@@ -24,5 +25,13 @@ class TestTaskTest < Minitest::Test
 
   def test_composing_rake_testtask
     assert_equal @rake_task, @ttnt_task.rake_testtask
+  end
+
+  def test_expanded_file_list
+    # It gathers tests from both `pattern` and `test_files` option for Rake::TestTask
+    assert_equal(
+      Rake::FileList['test/**/*_test.rb'] + Rake::FileList['test/dummy_test.rb'],
+      @ttnt_task.expanded_file_list
+    )
   end
 end
