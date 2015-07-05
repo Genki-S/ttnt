@@ -42,7 +42,7 @@ module TTNT
 
     private
 
-    def test_to_code_mapping
+    def mapping
       @mapping ||= TTNT::TestToCodeMapping.new(@repo)
     end
 
@@ -60,9 +60,9 @@ module TTNT
           when :addition
             # FIXME: new_lineno is suspicious
             #        (what if hunk1 adds 100 lines and hunk2 add 1 line?)
-            tests += test_to_code_mapping.get_tests(file: file, lineno: line.new_lineno)
+            tests += mapping.get_tests(file: file, lineno: line.new_lineno)
           when :deletion
-            tests += test_to_code_mapping.get_tests(file: file, lineno: line.old_lineno)
+            tests += mapping.get_tests(file: file, lineno: line.old_lineno)
           end
         end
       end
