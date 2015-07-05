@@ -25,33 +25,49 @@ module TTNT
     #
     # @return [Set] a set of tests that might be affected by changes in base_sha...target_sha
     def select_tests
+      # TODO: if test-to-code-mapping is not found (ttnt-anchor has not been run)
       tests = Set.new
-      mapping = TTNT::TestToCodeMapping.new(@repo)
-      # TODO: if mapping is not found (ttnt-anchor has not been run)
 
       diff = @base_obj.diff(@target_obj)
       diff.each_patch do |patch|
         file = patch.delta.old_file[:path]
-        tests << file and next if test_file?(file)
-
-        patch.each_hunk do |hunk|
-          # TODO: think if this selection covers all possibilities
-          hunk.each_line do |line|
-            case line.line_origin
-            when :addition
-              # FIXME: new_lineno is suspicious
-              #        (what if hunk1 adds 100 lines and hunk2 add 1 line?)
-              tests += mapping.get_tests(file: file, lineno: line.new_lineno)
-            when :deletion
-              tests += mapping.get_tests(file: file, lineno: line.old_lineno)
-            end
-          end
+        if test_file?(file)
+          tests << file
+        else
+          tests += select_tests_from_patch(patch)
         end
       end
       tests.delete(nil)
     end
 
     private
+
+    def test_to_code_mapping
+      @mapping ||= TTNT::TestToCodeMapping.new(@repo)
+    end
+
+    # Select tests which are affected by the change of given patch.
+    #
+    # @param patch [Rugged::Patch]
+    # @return [Set] set of selected tests
+    def select_tests_from_patch(patch)
+      tests = Set.new
+      file = patch.delta.old_file[:path]
+      patch.each_hunk do |hunk|
+        # TODO: think if this selection covers all possibilities
+        hunk.each_line do |line|
+          case line.line_origin
+          when :addition
+            # FIXME: new_lineno is suspicious
+            #        (what if hunk1 adds 100 lines and hunk2 add 1 line?)
+            tests += test_to_code_mapping.get_tests(file: file, lineno: line.new_lineno)
+          when :deletion
+            tests += test_to_code_mapping.get_tests(file: file, lineno: line.old_lineno)
+          end
+        end
+      end
+      tests.delete(nil)
+    end
 
     # Find the commit `rake ttnt:test:anchor` has been run on.
     #
