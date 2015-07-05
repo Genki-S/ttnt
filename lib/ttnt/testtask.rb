@@ -100,8 +100,7 @@ module TTNT
             "-I#{gem_root} -r ttnt/anchor " +
             "#{@rake_testtask.ruby_opts_string}"
 
-          test_files = expanded_file_list
-          test_files.each do |test_file|
+          expanded_file_list.each do |test_file|
             run_ruby "#{args} #{test_file}"
           end
         end
