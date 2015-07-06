@@ -1,5 +1,6 @@
 require 'coverage'
 require 'ttnt/test_to_code_mapping'
+require 'ttnt/metadata'
 require 'rugged'
 
 test_file = $0
@@ -12,5 +13,7 @@ at_exit do
   sha = repo.head.target_id
   mapping = TTNT::TestToCodeMapping.new(repo)
   mapping.append_from_coverage(test_file, Coverage.result)
-  mapping.save_commit_info(sha)
+  metadata = TTNT::MetaData.new(repo)
+  metadata.set('anchored_commit', sha)
+  metadata.write!
 end
