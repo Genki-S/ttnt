@@ -57,18 +57,16 @@ module TTNT
     end
 
     # Define a task which runs only tests which might have affected from changes
-    # in BASE_SHA...TARGET_SHA
+    # between anchored commit and TARGET_SHA.
     #
-    # TARGET_SHA and BASE_SHA can be specified as an environment variable. They
-    # defaults to HEAD and merge base between master and TARGET_SHA, respectively.
+    # TARGET_SHA can be specified as an environment variable (defaults to HEAD).
     #
     # @return [void]
     def define_run_task
       desc @run_description
       task 'run' do
         target_sha = ENV['TARGET_SHA'] || repo.head.target_id
-        base_sha = ENV['BASE_SHA'] || repo.merge_base(target_sha, repo.rev_parse('master'))
-        ts = TTNT::TestSelector.new(repo, target_sha, base_sha, expanded_file_list)
+        ts = TTNT::TestSelector.new(repo, target_sha, expanded_file_list)
         tests = ts.select_tests!
         if tests.empty?
           STDERR.puts 'No test selected.'
