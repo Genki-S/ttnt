@@ -4,8 +4,11 @@ module TTNT
   class MetaData
     STORAGE_SECTION = 'meta'
 
-    def initialize(repo)
-      @storage = Storage.new(repo)
+    # @param repo [Rugged::Repository]
+    # @param sha [String] sha of commit from which metadata is read from.
+    #   nil means to read from current working tree. see {Storage} for more.
+    def initialize(repo, sha)
+      @storage = Storage.new(repo, sha)
       read!
     end
 

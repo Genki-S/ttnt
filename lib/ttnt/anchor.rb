@@ -13,7 +13,7 @@ at_exit do
   sha = repo.head.target_id
   mapping = TTNT::TestToCodeMapping.new(repo)
   mapping.append_from_coverage(test_file, Coverage.result)
-  metadata = TTNT::MetaData.new(repo)
+  metadata = TTNT::MetaData.new(repo, nil)
   metadata.set('anchored_commit', sha)
   metadata.write!
 end

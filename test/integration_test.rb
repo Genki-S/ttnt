@@ -6,7 +6,7 @@ module TTNT
     def test_saving_anchored_commit
       anchored_commit = @repo.head.target_id
       rake('ttnt:test:anchor')
-      metadata = TTNT::MetaData.new(@repo)
+      metadata = TTNT::MetaData.new(@repo, nil)
       assert_equal anchored_commit, metadata.get('anchored_commit')
     end
 

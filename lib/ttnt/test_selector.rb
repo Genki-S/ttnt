@@ -15,7 +15,7 @@ module TTNT
     # @param test_files [#include?] candidate test files
     def initialize(repo, target_sha, base_sha, test_files)
       @repo = repo
-      @metadata = MetaData.new(repo)
+      @metadata = MetaData.new(repo, target_sha)
       @target_obj = @repo.lookup(target_sha)
 
       # Base should be the commit `ttnt:anchor` has run on.
