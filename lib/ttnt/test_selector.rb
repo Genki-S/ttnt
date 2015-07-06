@@ -47,7 +47,7 @@ module TTNT
     private
 
     def mapping
-      @mapping ||= TTNT::TestToCodeMapping.new(@repo)
+      @mapping ||= TTNT::TestToCodeMapping.new(@repo, @target_obj.oid)
     end
 
     # Select tests which are affected by the change of given patch.
