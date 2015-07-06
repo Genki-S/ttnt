@@ -19,11 +19,6 @@ class TestToCodeMappingTest < TTNT::TestCase
     assert_equal expected_mapping, @test_to_code_mapping.read_mapping
   end
 
-  def test_save_commit_info
-    @test_to_code_mapping.save_commit_info(@repo.head.target_id)
-    assert_equal @repo.head.target_id, File.read("#{@repo.workdir}/.ttnt/commit_obj.txt")
-  end
-
   def test_get_tests
     test_file = 'test/fizz_test.rb'
     coverage = { "#{@repo.workdir}/lib/fizzbuzz.rb"=> [1, 1, nil, 1, 0, 1, 0, 1] }
