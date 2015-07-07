@@ -21,7 +21,6 @@ module TTNT
       @base_obj = find_anchored_commit(base_sha)
 
       @test_files = test_files
-      @tests = Set.new
     end
 
     # Select tests using differences in base_sha...target_sha and the latest
@@ -30,6 +29,7 @@ module TTNT
     # @return [Set] a set of tests that might be affected by changes in base_sha...target_sha
     def select_tests!
       # TODO: if test-to-code-mapping is not found (ttnt-anchor has not been run)
+      @tests ||= Set.new
       diff = @base_obj.diff(@target_obj)
       diff.each_patch do |patch|
         file = patch.delta.old_file[:path]

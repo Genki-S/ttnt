@@ -17,7 +17,7 @@ module TTNT
     end
 
     def test_selects_tests
-      assert_equal @selector.tests.to_a, []
+      assert_equal @selector.tests, nil
       assert_equal @selector.select_tests!.to_a, ['test/fizz_test.rb']
       assert_equal @selector.tests.to_a, ['test/fizz_test.rb']
     end
