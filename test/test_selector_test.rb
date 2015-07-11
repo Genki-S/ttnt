@@ -16,9 +16,9 @@ module TTNT
     end
 
     def test_selects_tests
-      assert_equal @selector.tests, nil
-      assert_equal @selector.select_tests!.to_a, ['test/fizz_test.rb']
-      assert_equal @selector.tests.to_a, ['test/fizz_test.rb']
+      assert_equal nil, @selector.tests
+      assert_equal ['test/fizz_test.rb'], @selector.select_tests!.to_a
+      assert_equal ['test/fizz_test.rb'], @selector.tests.to_a
     end
 
     def test_selects_tests_with_changed_test_file
