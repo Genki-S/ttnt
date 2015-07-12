@@ -56,17 +56,21 @@ module TTNT
     def select_tests_from_patch(patch)
       target_lines = Set.new
       file = patch.delta.old_file[:path]
+      prev_line = nil
       patch.each_hunk do |hunk|
-        # TODO: think if this selection covers all possibilities
         hunk.each_line do |line|
           case line.line_origin
           when :addition
-            # FIXME: new_lineno is suspicious
-            #        (what if hunk1 adds 100 lines and hunk2 add 1 line?)
-            target_lines << line.new_lineno
+            if prev_line && !prev_line.addition?
+              target_lines << prev_line.old_lineno
+            else
+              target_lines << hunk.old_start
+            end
           when :deletion
             target_lines << line.old_lineno
           end
+
+          prev_line = line
         end
       end
 
