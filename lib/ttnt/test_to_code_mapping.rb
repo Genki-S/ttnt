@@ -14,7 +14,7 @@ module TTNT
 
     # @param repo [Rugged::Reposiotry] repository to save test-to-code mapping
     #   (only repo.workdir is used to determine where to save the mapping file)
-    # @param sha [String] sha of commit from which mapping is read from.
+    # @param sha [String] sha of commit from which mapping is read.
     #   nil means to read from current working tree. see {Storage} for more.
     def initialize(repo, sha)
       @repo = repo
