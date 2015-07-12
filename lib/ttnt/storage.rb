@@ -1,5 +1,5 @@
 module TTNT
-  # A storage to store TTNT data such as test-to-code mapping and metadata.
+  # A utility class to store TTNT data such as test-to-code mapping and metadata.
   class Storage
     # Initialize the storage from given repo and sha. This reads contents from
     # a file `.ttnt`. When sha is not nil, contents of the file on that commit
