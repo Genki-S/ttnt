@@ -4,7 +4,7 @@ require 'ttnt/storage'
 class StorageTest < TTNT::TestCase
   def setup
     @storage_file = "#{@repo.workdir}/.ttnt"
-    FileUtils.rm_rf(@storage_file)
+    File.delete(@storage_file)
 
     @section = 'test'
     @storage = TTNT::Storage.new(@repo)
