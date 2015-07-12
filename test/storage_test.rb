@@ -23,7 +23,8 @@ class StorageTest < TTNT::TestCase
     new_data = { 'c' => 3 }
     @storage.write!(@section, new_data) # write to a file in working tree
     history_storage = TTNT::Storage.new(@repo, sha)
-    assert_equal @data, history_storage.read(@section)
+    assert !history_storage.read(@section).key?('c'),
+      'History storage should not contain data from current working directory.'
   end
 
   def test_write_storage
