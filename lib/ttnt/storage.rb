@@ -37,7 +37,7 @@ module TTNT
       File.open(filename, File::RDWR|File::CREAT, 0644) do |f|
         f.flock(File::LOCK_EX)
         str = f.read
-        data = if str.length > 0 then JSON.parse(str) else {} end
+        data = str.length > 0 ? JSON.parse(str) : {}
         data[section] = value
         f.rewind
         f.write(data.to_json)
@@ -56,11 +56,7 @@ module TTNT
       if @sha
         @repo.lookup(@repo.lookup(@sha).tree['.ttnt'][:oid]).content
       else
-        if File.exist?(filename)
-          File.read(filename)
-        else
-          ""
-        end
+        File.exist?(filename) ? File.read(filename) : ''
       end
     end
   end
