@@ -4,14 +4,14 @@ require 'ttnt/test_to_code_mapping'
 module TTNT
   class IntegrationTest < TTNT::TestCase
     def test_saving_anchored_commit
-      anchored_sha = @repo.head.target_id
+      anchored_commit = @repo.head.target_id
       rake('ttnt:test:anchor')
-      saved = File.read("#{@repo.workdir}/.ttnt/commit_obj.txt")
-      assert_equal anchored_sha, saved
+      metadata = TTNT::MetaData.new(@repo)
+      assert_equal anchored_commit, metadata['anchored_commit']
     end
 
     def test_mapping_generation
-      mapping = JSON.parse(File.read("#{@repo.workdir}/.ttnt/test_to_code_mapping.json"))
+      mapping = TTNT::TestToCodeMapping.new(@repo, @repo.head.target_id).read_mapping
       expected_mapping = {"test/buzz_test.rb"=>{"lib/fizzbuzz.rb"=>[1, 2, 4, 6, 7]},
                           "test/fizz_test.rb"=>{"lib/fizzbuzz.rb"=>[1, 2, 4, 5]}}
       assert_equal expected_mapping, mapping

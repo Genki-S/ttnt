@@ -1,6 +1,7 @@
 require 'set'
 require 'rugged'
-require_relative './test_to_code_mapping'
+require 'ttnt/metadata'
+require 'ttnt/test_to_code_mapping'
 
 module TTNT
   # Select tests using git information and {TestToCodeMapping}
@@ -14,11 +15,12 @@ module TTNT
     # @param test_files [#include?] candidate test files
     def initialize(repo, target_sha, base_sha, test_files)
       @repo = repo
+      @metadata = MetaData.new(repo, target_sha)
       @target_obj = @repo.lookup(target_sha)
 
       # Base should be the commit `ttnt:anchor` has run on.
       # NOT the one test-to-code mapping was commited to.
-      @base_obj = find_anchored_commit(base_sha)
+      @base_obj = find_anchored_commit
 
       @test_files = test_files
     end
@@ -45,7 +47,7 @@ module TTNT
     private
 
     def mapping
-      @mapping ||= TTNT::TestToCodeMapping.new(@repo)
+      @mapping ||= TTNT::TestToCodeMapping.new(@repo, @target_obj.oid)
     end
 
     # Select tests which are affected by the change of given patch.
@@ -70,12 +72,8 @@ module TTNT
     end
 
     # Find the commit `rake ttnt:test:anchor` has been run on.
-    #
-    # @param sha [String] sha of a commit from which search starts
-    def find_anchored_commit(sha)
-      ttnt_tree = @repo.lookup(@repo.lookup(sha).tree['.ttnt'][:oid])
-      anchored_sha = @repo.lookup(ttnt_tree['commit_obj.txt'][:oid]).content
-      @repo.lookup(anchored_sha)
+    def find_anchored_commit
+      @repo.lookup(@metadata['anchored_commit'])
     end
 
     # Check if given file is a test file

@@ -1,3 +1,4 @@
+require 'ttnt/storage'
 require 'rugged'
 require 'json'
 require 'set'
@@ -9,10 +10,15 @@ module TTNT
   #   spectra: { filename => [line, numbers, executed], ... }
   #   mapping: { test_file => spectra }
   class TestToCodeMapping
+    STORAGE_SECTION = 'mapping'
+
     # @param repo [Rugged::Reposiotry] repository to save test-to-code mapping
     #   (only repo.workdir is used to determine where to save the mapping file)
-    def initialize(repo)
+    # @param sha [String] sha of commit from which mapping is read.
+    #   nil means to read from current working tree. see {Storage} for more.
+    def initialize(repo, sha = nil)
       @repo = repo
+      @storage = Storage.new(repo, sha)
       raise 'Not in a git repository' unless @repo
     end
 
@@ -26,15 +32,11 @@ module TTNT
       update_mapping_entry(test: test, spectra: spectra)
     end
 
-    # Read test-to-code mapping from file
+    # Read test-to-code mapping from storage.
     #
     # @return [Hash] test-to-code mapping
     def read_mapping
-      if File.exist?(mapping_file)
-        JSON.parse(File.read(mapping_file))
-      else
-        {}
-      end
+      @storage.read(STORAGE_SECTION)
     end
 
     # Get tests affected from change of file `file` at line number `lineno`
@@ -53,18 +55,6 @@ module TTNT
         end
       end
       tests
-    end
-
-    # Save commit's sha anchoring has been run on.
-    #
-    # @param sha [String] commit's sha anchoring has been run on
-    # @return [void]
-    # FIXME: this might not be the responsibility for this class
-    def save_commit_info(sha)
-      unless File.directory?(File.dirname(commit_info_file))
-        FileUtils.mkdir_p(File.dirname(commit_info_file))
-      end
-      File.write(commit_info_file, sha)
     end
 
     private
@@ -112,39 +102,14 @@ module TTNT
       spectra
     end
 
-    # Update single test-to-code mapping entry in a file
+    # Update single test-to-code mapping entry.
     #
     # @param test [String] target test file
     # @param spectra [Hash] spectra data for when executing the test file
     # @return [void]
     def update_mapping_entry(test:, spectra:)
-      dir = base_savedir
-      unless File.directory?(dir)
-        FileUtils.mkdir_p(dir)
-      end
       mapping = read_mapping.merge({ test => spectra })
-      File.write(mapping_file, mapping.to_json)
-    end
-
-    # Base directory to save TTNT related files
-    #
-    # @return [String]
-    def base_savedir
-      "#{@repo.workdir}/.ttnt"
-    end
-
-    # File name to save test-to-code mapping
-    #
-    # @return [String]
-    def mapping_file
-      "#{base_savedir}/test_to_code_mapping.json"
-    end
-
-    # File name to save commit object on which anchoring has been run
-    #
-    # @return [String]
-    def commit_info_file
-      "#{base_savedir}/commit_obj.txt"
+      @storage.write!(STORAGE_SECTION, mapping)
     end
   end
 end

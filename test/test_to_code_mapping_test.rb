@@ -4,7 +4,7 @@ require 'ttnt/test_to_code_mapping'
 class TestToCodeMappingTest < TTNT::TestCase
   def setup
     # clean up generated .ttnt files
-    FileUtils.rm_rf("#{@repo.workdir}/.ttnt")
+    File.delete("#{@repo.workdir}/.ttnt")
     @test_to_code_mapping = TTNT::TestToCodeMapping.new(@repo)
   end
 
@@ -17,11 +17,6 @@ class TestToCodeMappingTest < TTNT::TestCase
       test_file => { 'lib/fizzbuzz.rb' => [1, 2, 4, 6, 8] }
     }
     assert_equal expected_mapping, @test_to_code_mapping.read_mapping
-  end
-
-  def test_save_commit_info
-    @test_to_code_mapping.save_commit_info(@repo.head.target_id)
-    assert_equal @repo.head.target_id, File.read("#{@repo.workdir}/.ttnt/commit_obj.txt")
   end
 
   def test_get_tests
