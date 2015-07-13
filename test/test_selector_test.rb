@@ -21,6 +21,15 @@ module TTNT
       assert_equal ['test/fizz_test.rb'], @selector.tests.to_a
     end
 
+    def test_selects_tests_from_current_working_tree
+      @repo.checkout('change_fizz')
+      # Change buzz too
+      fizzbuzz_file = "#{@repo.workdir}/lib/fizzbuzz.rb"
+      File.write(fizzbuzz_file, File.read(fizzbuzz_file).gsub(/"buzz"$/, '"bar"'))
+      selector = TTNT::TestSelector.new(@repo, nil, @test_files)
+      assert_equal selector.select_tests!, Set.new(['test/fizz_test.rb', 'test/buzz_test.rb'])
+    end
+
     def test_selects_tests_with_changed_test_file
       buzz_test = "#{@repo.workdir}/test/buzz_test.rb"
       File.write(buzz_test, File.read(buzz_test) + "\n") # meaningless change

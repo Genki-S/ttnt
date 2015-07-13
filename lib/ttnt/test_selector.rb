@@ -11,11 +11,12 @@ module TTNT
 
     # @param repo [Rugged::Reposiotry] repository of the project
     # @param target_sha [String] sha of the target object
+    #   (nil means to target current working tree)
     # @param test_files [#include?] candidate test files
     def initialize(repo, target_sha, test_files)
       @repo = repo
       @metadata = MetaData.new(repo, target_sha)
-      @target_obj = @repo.lookup(target_sha)
+      @target_obj = target_sha ? @repo.lookup(target_sha) : nil
 
       # Base should be the commit `ttnt:anchor` has run on.
       # NOT the one test-to-code mapping was commited to.
@@ -31,7 +32,7 @@ module TTNT
     def select_tests!
       # TODO: if test-to-code-mapping is not found (ttnt-anchor has not been run)
       @tests ||= Set.new
-      diff = @base_obj.diff(@target_obj)
+      diff = @target_obj ? @base_obj.diff(@target_obj) : @base_obj.diff_workdir
       diff.each_patch do |patch|
         file = patch.delta.old_file[:path]
         if test_file?(file)
@@ -46,7 +47,8 @@ module TTNT
     private
 
     def mapping
-      @mapping ||= TTNT::TestToCodeMapping.new(@repo, @target_obj.oid)
+      sha = @target_obj ? @target_obj.oid : @repo.head.target_id
+      @mapping ||= TTNT::TestToCodeMapping.new(@repo, sha)
     end
 
     # Select tests which are affected by the change of given patch.
