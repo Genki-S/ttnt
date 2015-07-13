@@ -6,7 +6,7 @@ class MetaDataTest < TTNT::TestCase
     @storage_file = "#{@repo.workdir}/.ttnt"
     File.delete(@storage_file)
 
-    @metadata = TTNT::MetaData.new(@repo, nil)
+    @metadata = TTNT::MetaData.new(@repo)
     @name = 'anchored_sha'
     @value = 'abcdef'
   end

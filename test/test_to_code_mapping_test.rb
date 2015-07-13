@@ -5,7 +5,7 @@ class TestToCodeMappingTest < TTNT::TestCase
   def setup
     # clean up generated .ttnt files
     File.delete("#{@repo.workdir}/.ttnt")
-    @test_to_code_mapping = TTNT::TestToCodeMapping.new(@repo, nil)
+    @test_to_code_mapping = TTNT::TestToCodeMapping.new(@repo)
   end
 
   def test_append_from_coverage

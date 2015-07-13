@@ -16,7 +16,7 @@ module TTNT
     #   (only repo.workdir is used to determine where to save the mapping file)
     # @param sha [String] sha of commit from which mapping is read.
     #   nil means to read from current working tree. see {Storage} for more.
-    def initialize(repo, sha)
+    def initialize(repo, sha = nil)
       @repo = repo
       @storage = Storage.new(repo, sha)
       raise 'Not in a git repository' unless @repo
