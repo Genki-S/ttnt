@@ -73,7 +73,7 @@ module TTNT
 
     # Find the commit `rake ttnt:test:anchor` has been run on.
     def find_anchored_commit
-      @repo.lookup(@metadata.get('anchored_commit'))
+      @repo.lookup(@metadata['anchored_commit'])
     end
 
     # Check if given file is a test file

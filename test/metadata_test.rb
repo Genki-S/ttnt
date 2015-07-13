@@ -13,13 +13,13 @@ class MetaDataTest < TTNT::TestCase
 
   def test_get_metadata
     File.write(@storage_file, { 'meta' => { @name => @value} }.to_json)
-    assert @metadata.get(@name).nil?, '#get should not read from file.'
+    assert @metadata[@name].nil?, '#get should not read from file.'
     @metadata.read!
-    assert_equal @value, @metadata.get(@name)
+    assert_equal @value, @metadata[@name]
   end
 
   def test_write_metadata
-    @metadata.set(@name, @value)
+    @metadata[@name] = @value
     @metadata.write!
     expected = { 'meta' => { @name => @value } }
     assert_equal expected, JSON.parse(File.read(@storage_file))

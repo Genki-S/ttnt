@@ -7,7 +7,7 @@ module TTNT
       anchored_commit = @repo.head.target_id
       rake('ttnt:test:anchor')
       metadata = TTNT::MetaData.new(@repo, nil)
-      assert_equal anchored_commit, metadata.get('anchored_commit')
+      assert_equal anchored_commit, metadata['anchored_commit']
     end
 
     def test_mapping_generation

@@ -12,11 +12,11 @@ module TTNT
       read!
     end
 
-    def get(name)
+    def [](name)
       @data[name]
     end
 
-    def set(name, value)
+    def []=(name, value)
       @data[name] = value
     end
 
