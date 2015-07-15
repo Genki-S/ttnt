@@ -12,6 +12,8 @@ module TTNT
   class TestToCodeMapping
     STORAGE_SECTION = 'mapping'
 
+    attr_reader :mapping
+
     # @param repo [Rugged::Reposiotry] repository to save test-to-code mapping
     #   (only repo.workdir is used to determine where to save the mapping file)
     # @param sha [String] sha of commit from which mapping is read.
@@ -19,6 +21,7 @@ module TTNT
     def initialize(repo, sha = nil)
       @repo = repo
       @storage = Storage.new(repo, sha)
+      read!
       raise 'Not in a git repository' unless @repo
     end
 
@@ -29,14 +32,17 @@ module TTNT
     # @return [void]
     def append_from_coverage(test, coverage)
       spectra = normalize_paths(select_project_files(spectra_from_coverage(coverage)))
-      update_mapping_entry(test: test, spectra: spectra)
+      @mapping[test] = spectra
     end
 
     # Read test-to-code mapping from storage.
-    #
-    # @return [Hash] test-to-code mapping
-    def read_mapping
-      @storage.read(STORAGE_SECTION)
+    def read!
+      @mapping = @storage.read(STORAGE_SECTION)
+    end
+
+    # Write test-to-code mapping to storage.
+    def write!
+      @storage.write!(STORAGE_SECTION, @mapping)
     end
 
     # Get tests affected from change of file `file` at line number `lineno`
@@ -46,7 +52,7 @@ module TTNT
     # @return [Set] a set of test files which might be affected by the change in file at lineno
     def get_tests(file:, lineno:)
       tests = Set.new
-      read_mapping.each do |test, spectra|
+      @mapping.each do |test, spectra|
         lines = spectra[file]
         next unless lines
         n = lines.bsearch { |x| x >= lineno }
@@ -100,16 +106,6 @@ module TTNT
         end
       end
       spectra
-    end
-
-    # Update single test-to-code mapping entry.
-    #
-    # @param test [String] target test file
-    # @param spectra [Hash] spectra data for when executing the test file
-    # @return [void]
-    def update_mapping_entry(test:, spectra:)
-      mapping = read_mapping.merge({ test => spectra })
-      @storage.write!(STORAGE_SECTION, mapping)
     end
   end
 end

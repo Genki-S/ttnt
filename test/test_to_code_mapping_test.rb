@@ -16,7 +16,7 @@ class TestToCodeMappingTest < TTNT::TestCase
     expected_mapping = {
       test_file => { 'lib/fizzbuzz.rb' => [1, 2, 4, 6, 8] }
     }
-    assert_equal expected_mapping, @test_to_code_mapping.read_mapping
+    assert_equal expected_mapping, @test_to_code_mapping.mapping
   end
 
   def test_get_tests
