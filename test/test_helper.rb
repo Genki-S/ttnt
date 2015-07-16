@@ -46,10 +46,10 @@ module TTNT
       def populate_with_fixtures
         copy_fixture('Rakefile', "#{@tmpdir}/Rakefile")
         git_commit_am('Add Rakefile')
-        copy_fixture('fizzbuzz.rb', "#{@tmpdir}/lib/fizzbuzz.rb")
+        copy_fixture('fizzbuzz.rb', "#{@tmpdir}/fizzbuzz.rb")
         git_commit_am('Add fizzbuzz code')
-        copy_fixture('fizz_test.rb', "#{@tmpdir}/test/fizz_test.rb")
-        copy_fixture('buzz_test.rb', "#{@tmpdir}/test/buzz_test.rb")
+        copy_fixture('fizz_test.rb', "#{@tmpdir}/fizz_test.rb")
+        copy_fixture('buzz_test.rb', "#{@tmpdir}/buzz_test.rb")
         git_commit_am('Add fizzbuzz tests')
       end
 
@@ -61,7 +61,7 @@ module TTNT
 
       def make_change_fizz_branch
         git_checkout_b('change_fizz')
-        fizzbuzz_file = "#{@repo.workdir}/lib/fizzbuzz.rb"
+        fizzbuzz_file = "#{@repo.workdir}/fizzbuzz.rb"
         new_content = File.read(fizzbuzz_file)
                           .gsub(/"fizzbuzz"$/, '"fizzbizz"' + "\n" * 10) # diff uglifier
                           .gsub(/"fizz"$/, '"foo"')

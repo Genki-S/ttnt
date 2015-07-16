@@ -1,5 +1,5 @@
 require 'minitest/autorun'
-require_relative '../lib/fizzbuzz'
+require_relative './fizzbuzz'
 
 class TestBuzz < Minitest::Test
   def test_buzz
