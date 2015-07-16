@@ -13,11 +13,13 @@ require 'minitest/autorun'
 
 module TTNT
   module TestCase
-    class FizzBuzz < Minitest::Test
-      FIXTURE_DIR = File.join(__dir__, 'fixtures/fizzbuzz')
-
+    class Base < Minitest::Test
       include GitHelper
       include RakeHelper
+
+      def fixture_dir
+        raise '`fixture_dir` method is not implemented.'
+      end
 
       def before_setup
         super
@@ -40,17 +42,15 @@ module TTNT
         populate_with_fixtures
         load_rakefile("#{@tmpdir}/Rakefile")
         anchor_and_commit
-        make_change_fizz_branch
+        after_preparing_git_repository
       end
 
       def populate_with_fixtures
-        copy_fixture('Rakefile', "#{@tmpdir}/Rakefile")
-        git_commit_am('Add Rakefile')
-        copy_fixture('fizzbuzz.rb', "#{@tmpdir}/fizzbuzz.rb")
-        git_commit_am('Add fizzbuzz code')
-        copy_fixture('fizz_test.rb', "#{@tmpdir}/fizz_test.rb")
-        copy_fixture('buzz_test.rb', "#{@tmpdir}/buzz_test.rb")
-        git_commit_am('Add fizzbuzz tests')
+        Dir.entries(fixture_dir).each do |file|
+          next if file.start_with?('.')
+          copy_fixture(file, "#{@tmpdir}/#{file}")
+          git_commit_am("Add #{file}")
+        end
       end
 
       def anchor_and_commit
@@ -59,22 +59,11 @@ module TTNT
         git_commit_am('Add TTNT generated files')
       end
 
-      def make_change_fizz_branch
-        git_checkout_b('change_fizz')
-        fizzbuzz_file = "#{@repo.workdir}/fizzbuzz.rb"
-        new_content = File.read(fizzbuzz_file)
-                          .gsub(/"fizzbuzz"$/, '"fizzbizz"' + "\n" * 10) # diff uglifier
-                          .gsub(/"fizz"$/, '"foo"')
-        File.write(fizzbuzz_file, new_content)
-        git_commit_am('Change fizz code')
-        @repo.checkout('master')
-      end
-
       def copy_fixture(src, dest)
         unless File.directory?(File.dirname(dest))
           FileUtils.mkdir_p(File.dirname(dest))
         end
-        FileUtils.cp("#{FIXTURE_DIR}/#{src}", dest)
+        FileUtils.cp("#{fixture_dir}/#{src}", dest)
       end
 
       def capture
@@ -97,6 +86,29 @@ module TTNT
         captured_stream_err.unlink
         $stdout.reopen(origin_stream)
         $stderr.reopen(origin_stream_err)
+      end
+    end
+
+    class FizzBuzz < Base
+      def fixture_dir
+        File.join(__dir__, 'fixtures/fizzbuzz')
+      end
+
+      private
+
+      def after_preparing_git_repository
+        make_change_fizz_branch
+      end
+
+      def make_change_fizz_branch
+        git_checkout_b('change_fizz')
+        fizzbuzz_file = "#{@repo.workdir}/fizzbuzz.rb"
+        new_content = File.read(fizzbuzz_file)
+                          .gsub(/"fizzbuzz"$/, '"fizzbizz"' + "\n" * 10) # diff uglifier
+                          .gsub(/"fizz"$/, '"foo"')
+        File.write(fizzbuzz_file, new_content)
+        git_commit_am('Change fizz code')
+        @repo.checkout('master')
       end
     end
   end
