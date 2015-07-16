@@ -1,7 +1,7 @@
 require 'test_helper'
 require 'ttnt/test_to_code_mapping'
 
-class TestToCodeMappingTest < TTNT::TestCase
+class TestToCodeMappingTest < TTNT::TestCase::FizzBuzz
   def setup
     # clean up generated .ttnt files
     File.delete("#{@repo.workdir}/.ttnt")

@@ -2,7 +2,7 @@ require 'test_helper'
 require 'ttnt/test_selector'
 
 module TTNT
-  class TestSelectorTest < TTNT::TestCase
+  class TestSelectorTest < TTNT::TestCase::FizzBuzz
     def setup
       target_sha = @repo.branches['change_fizz'].target.oid
       master_sha = @repo.branches['master'].target.oid

@@ -1,7 +1,7 @@
 require 'test_helper'
 require 'ttnt/metadata'
 
-class MetaDataTest < TTNT::TestCase
+class MetaDataTest < TTNT::TestCase::FizzBuzz
   def setup
     @storage_file = "#{@repo.workdir}/.ttnt"
     File.delete(@storage_file)

@@ -2,7 +2,7 @@ require 'test_helper'
 require 'ttnt/test_to_code_mapping'
 
 module TTNT
-  class IntegrationTest < TTNT::TestCase
+  class IntegrationTest < TTNT::TestCase::FizzBuzz
     def test_saving_anchored_commit
       anchored_commit = @repo.head.target_id
       rake('ttnt:test:anchor')
