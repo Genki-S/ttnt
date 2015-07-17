@@ -12,8 +12,8 @@ module TTNT
 
     def test_mapping_generation
       mapping = TTNT::TestToCodeMapping.new(@repo, @repo.head.target_id).mapping
-      expected_mapping = {"test/buzz_test.rb"=>{"lib/fizzbuzz.rb"=>[9, 10, 12, 14, 15]},
-                          "test/fizz_test.rb"=>{"lib/fizzbuzz.rb"=>[9, 10, 12, 13]}}
+      expected_mapping = {"test/buzz_test.rb"=>{"lib/fizzbuzz.rb"=>[1, 2, 4, 6, 7]},
+                          "test/fizz_test.rb"=>{"lib/fizzbuzz.rb"=>[1, 2, 4, 5]}}
       assert_equal expected_mapping, mapping
     end
 
