@@ -63,7 +63,7 @@ module TTNT
           when :addition
             if prev_line && !prev_line.addition?
               target_lines << prev_line.old_lineno
-            else
+            elsif prev_line.nil?
               target_lines << hunk.old_start
             end
           when :deletion
