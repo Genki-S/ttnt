@@ -54,19 +54,28 @@ module TTNT
     # @param patch [Rugged::Patch]
     # @return [Set] set of selected tests
     def select_tests_from_patch(patch)
+      target_lines = Set.new
       file = patch.delta.old_file[:path]
+      prev_line = nil
       patch.each_hunk do |hunk|
-        # TODO: think if this selection covers all possibilities
         hunk.each_line do |line|
           case line.line_origin
           when :addition
-            # FIXME: new_lineno is suspicious
-            #        (what if hunk1 adds 100 lines and hunk2 add 1 line?)
-            @tests += mapping.get_tests(file: file, lineno: line.new_lineno)
+            if prev_line && !prev_line.addition?
+              target_lines << prev_line.old_lineno
+            elsif prev_line.nil?
+              target_lines << hunk.old_start
+            end
           when :deletion
-            @tests += mapping.get_tests(file: file, lineno: line.old_lineno)
+            target_lines << line.old_lineno
           end
+
+          prev_line = line
         end
+      end
+
+      target_lines.each do |line|
+        @tests += mapping.get_tests(file: file, lineno: line)
       end
     end
 
