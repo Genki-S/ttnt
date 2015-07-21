@@ -7,7 +7,7 @@ module TTNT
     # working tree).
     #
     # @param repo [Rugged::Repository]
-    # @param sha [String] sha of the commit from which data should be read
+    # @param sha [String] sha of the commit from which data should be read.
     #   nil means reading from/writing to current working tree.
     def initialize(repo, sha = nil)
       @repo = repo

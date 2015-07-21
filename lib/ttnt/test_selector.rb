@@ -4,7 +4,7 @@ require 'ttnt/metadata'
 require 'ttnt/test_to_code_mapping'
 
 module TTNT
-  # Select tests using git information and {TestToCodeMapping}
+  # Select tests using git information and {TestToCodeMapping}.
   class TestSelector
 
     attr_reader :tests
@@ -25,8 +25,8 @@ module TTNT
       @test_files = test_files
     end
 
-    # Select tests using differences in base_sha...target_sha and the latest
-    # TestToCodeMapping committed to base_sha.
+    # Select tests using differences in anchored commit and target commit
+    # (or current working tree) and {TestToCodeMapping}.
     #
     # @return [Set] a set of tests that might be affected by changes in base_sha...target_sha
     def select_tests!
@@ -86,7 +86,7 @@ module TTNT
       @repo.lookup(@metadata['anchored_commit'])
     end
 
-    # Check if given file is a test file
+    # Check if given file is a test file.
     #
     # @param filename [String]
     def test_file?(filename)
