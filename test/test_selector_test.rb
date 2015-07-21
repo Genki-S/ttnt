@@ -27,7 +27,7 @@ module TTNT
       fizzbuzz_file = "#{@repo.workdir}/lib/fizzbuzz.rb"
       File.write(fizzbuzz_file, File.read(fizzbuzz_file).gsub(/"buzz"$/, '"bar"'))
       selector = TTNT::TestSelector.new(@repo, nil, @test_files)
-      assert_equal selector.select_tests!, Set.new(['test/fizz_test.rb', 'test/buzz_test.rb'])
+      assert_equal Set.new(['test/fizz_test.rb', 'test/buzz_test.rb']), selector.select_tests!
     end
 
     def test_selects_tests_with_changed_test_file
