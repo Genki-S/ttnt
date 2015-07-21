@@ -27,5 +27,14 @@ module TTNT
       output = rake('ttnt:test:run')
       assert_match '1 runs, 1 assertions, 1 failures', output[:stdout]
     end
+
+    def test_tests_are_selected_based_on_changes_in_current_working_tree
+      @repo.checkout('change_fizz')
+      # Change buzz too
+      fizzbuzz_file = "#{@repo.workdir}/lib/fizzbuzz.rb"
+      File.write(fizzbuzz_file, File.read(fizzbuzz_file).gsub(/"buzz"$/, '"bar"'))
+      output = rake('ttnt:test:run')
+      assert_match '2 runs, 2 assertions, 2 failures', output[:stdout]
+    end
   end
 end

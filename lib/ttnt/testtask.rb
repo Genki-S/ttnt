@@ -65,7 +65,7 @@ module TTNT
     def define_run_task
       desc @run_description
       task 'run' do
-        target_sha = ENV['TARGET_SHA'] || repo.head.target_id
+        target_sha = ENV['TARGET_SHA']
         ts = TTNT::TestSelector.new(repo, target_sha, expanded_file_list)
         tests = ts.select_tests!
         if tests.empty?
