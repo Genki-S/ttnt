@@ -16,7 +16,7 @@ module TTNT
     def initialize(repo, target_sha, test_files)
       @repo = repo
       @metadata = MetaData.new(repo, target_sha)
-      @target_obj = target_sha ? @repo.lookup(target_sha) : nil
+      @target_obj = @repo.lookup(target_sha) if target_sha
 
       # Base should be the commit `ttnt:anchor` has run on.
       # NOT the one test-to-code mapping was commited to.
