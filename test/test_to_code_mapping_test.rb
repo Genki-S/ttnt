@@ -21,10 +21,14 @@ class TestToCodeMappingTest < TTNT::TestCase::FizzBuzz
 
   def test_get_tests
     test_file = 'fizz_test.rb'
-    coverage = { "#{@repo.workdir}/fizzbuzz.rb"=> [1, 1, nil, 1, 0, 1, 0, 1] }
+    coverage = { "#{@repo.workdir}/fizzbuzz.rb"=> [1, 1, nil, 1, 0, 1, 0, 1, 0] }
     @test_to_code_mapping.append_from_coverage(test_file, coverage)
-    assert @test_to_code_mapping.get_tests(file: 'fizzbuzz.rb', lineno: 3).empty?,
-      'It should be empty for code which is not executed'
+    assert_equal Set.new([test_file]),
+      @test_to_code_mapping.get_tests(file: 'fizzbuzz.rb', lineno: 3),
+      'It should select tests if the specified line is between the topmost executed line and downmost executed line in coverage'
+    assert_equal Set.new([]),
+      @test_to_code_mapping.get_tests(file: 'fizzbuzz.rb', lineno: 9),
+      'It should not select tests if the specified line is not between the topmost executed line and downmost executed line in coverage'
     assert_equal Set.new([test_file]),
       @test_to_code_mapping.get_tests(file: 'fizzbuzz.rb', lineno: 2)
   end
