@@ -103,9 +103,8 @@ module TTNT
       def make_change_fizz_branch
         git_checkout_b('change_fizz')
         fizzbuzz_file = "#{@repo.workdir}/fizzbuzz.rb"
-        new_content = File.read(fizzbuzz_file)
-                          .gsub(/"fizzbuzz"$/, '"fizzbizz"' + "\n" * 10) # diff uglifier
-                          .gsub(/"fizz"$/, '"foo"')
+        new_content = "\n" * 10 + File.read(fizzbuzz_file) # diff uglifier
+        new_content.gsub!(/"fizz"$/, '"foo"')
         File.write(fizzbuzz_file, new_content)
         git_commit_am('Change fizz code')
         @repo.checkout('master')
