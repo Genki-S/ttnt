@@ -111,5 +111,17 @@ module TTNT
         @repo.checkout('master')
       end
     end
+
+    class AdditionAmongComments < Base
+      def fixture_dir
+        File.join(__dir__, 'fixtures/addition_among_comments')
+      end
+
+      private
+
+      def after_preparing_git_repository
+        # do nothing
+      end
+    end
   end
 end

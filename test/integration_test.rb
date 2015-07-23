@@ -38,5 +38,14 @@ module TTNT
         assert_match '2 runs, 2 assertions, 2 failures', output[:stdout]
       end
     end
+
+    class AdditionAmongComments < TTNT::TestCase::AdditionAmongComments
+      def test_selecting_test_even_though_addition_is_made_among_comments
+        double_file = "double.rb"
+        File.write(double_file, File.read(double_file).gsub(/# ipsum$/, 'n *= 2'))
+        output = rake('ttnt:test:run')
+        assert_match '1 runs, 1 assertions, 1 failures', output[:stdout]
+      end
+    end
   end
 end
