@@ -55,8 +55,9 @@ module TTNT
       @mapping.each do |test, spectra|
         lines = spectra[file]
         next unless lines
-        n = lines.bsearch { |x| x >= lineno }
-        if n == lineno
+        topmost = lines.first
+        downmost = lines.last
+        if topmost <= lineno && lineno <= downmost
           tests << test
         end
       end

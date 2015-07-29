@@ -1,7 +1,7 @@
 require 'test_helper'
 require 'ttnt/storage'
 
-class StorageTest < TTNT::TestCase
+class StorageTest < TTNT::TestCase::FizzBuzz
   def setup
     @storage_file = "#{@repo.workdir}/.ttnt"
     File.delete(@storage_file)

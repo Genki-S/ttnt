@@ -2,11 +2,11 @@ require 'test_helper'
 require 'ttnt/test_selector'
 
 module TTNT
-  class TestSelectorTest < TTNT::TestCase
+  class TestSelectorTest < TTNT::TestCase::FizzBuzz
     def setup
       target_sha = @repo.branches['change_fizz'].target.oid
       master_sha = @repo.branches['master'].target.oid
-      @test_files = Rake::FileList['test/**/*_test.rb']
+      @test_files = Rake::FileList['*_test.rb']
       @selector = TTNT::TestSelector.new(@repo, target_sha, @test_files)
     end
 
@@ -17,28 +17,28 @@ module TTNT
 
     def test_selects_tests
       assert_equal nil, @selector.tests
-      assert_equal ['test/fizz_test.rb'], @selector.select_tests!.to_a
-      assert_equal ['test/fizz_test.rb'], @selector.tests.to_a
+      assert_equal ['fizz_test.rb'], @selector.select_tests!.to_a
+      assert_equal ['fizz_test.rb'], @selector.tests.to_a
     end
 
     def test_selects_tests_from_current_working_tree
       @repo.checkout('change_fizz')
       # Change buzz too
-      fizzbuzz_file = "#{@repo.workdir}/lib/fizzbuzz.rb"
+      fizzbuzz_file = "#{@repo.workdir}/fizzbuzz.rb"
       File.write(fizzbuzz_file, File.read(fizzbuzz_file).gsub(/"buzz"$/, '"bar"'))
       selector = TTNT::TestSelector.new(@repo, nil, @test_files)
-      assert_equal Set.new(['test/fizz_test.rb', 'test/buzz_test.rb']), selector.select_tests!
+      assert_equal Set.new(['fizz_test.rb', 'buzz_test.rb']), selector.select_tests!
     end
 
     def test_selects_tests_with_changed_test_file
-      buzz_test = "#{@repo.workdir}/test/buzz_test.rb"
+      buzz_test = "#{@repo.workdir}/buzz_test.rb"
       File.write(buzz_test, File.read(buzz_test) + "\n") # meaningless change
       git_checkout_b('change_buzz_test') # from master
       git_commit_am('Change buzz_test')
       target_sha = @repo.head.target_id
       master_sha = @repo.branches['master'].target.oid
       selector = TTNT::TestSelector.new(@repo, target_sha, @test_files)
-      assert_includes selector.select_tests!, 'test/buzz_test.rb'
+      assert_includes selector.select_tests!, 'buzz_test.rb'
     end
   end
 end

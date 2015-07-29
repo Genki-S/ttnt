@@ -2,8 +2,7 @@ require 'rake/testtask'
 require 'ttnt/testtask'
 
 Rake::TestTask.new(:test) do |t|
-  t.libs << "test"
-  t.pattern = 'test/**/*_test.rb'
+  t.pattern = '*_test.rb'
   TTNT::TestTask.new(t)
 end
 

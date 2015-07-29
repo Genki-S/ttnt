@@ -1,0 +1,9 @@
+require 'rake/testtask'
+require 'ttnt/testtask'
+
+Rake::TestTask.new(:test) do |t|
+  t.pattern = '*_test.rb'
+  TTNT::TestTask.new(t)
+end
+
+task :default => :test
