@@ -53,6 +53,18 @@ module TTNT
         ENV.delete('ISOLATED')
         assert_equal 3, output[:stdout].split('# Running:').count
       end
+
+      def test_isolated_with_fail_fast
+        @repo.checkout('change_fizz')
+        fizzbuzz_file = "#{@repo.workdir}/fizzbuzz.rb"
+        File.write(fizzbuzz_file, File.read(fizzbuzz_file).gsub(/"buzz"$/, '"bar"'))
+        ENV['ISOLATED'] = '1'
+        ENV['FAIL_FAST'] = '1'
+        output = rake('ttnt:test:run')
+        ENV.delete('ISOLATED')
+        ENV.delete('FAIL_FAST')
+        assert_equal 2, output[:stdout].split('Failure:').count
+      end
     end
 
     class AdditionAmongComments < TTNT::TestCase::AdditionAmongComments

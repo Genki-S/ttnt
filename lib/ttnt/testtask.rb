@@ -75,6 +75,7 @@ module TTNT
             tests.each do |test|
               args = "#{@rake_testtask.ruby_opts_string} #{test} #{@rake_testtask.option_list}"
               run_ruby args
+              break if @failed && ENV['FAIL_FAST']
             end
           else
             args =
@@ -117,6 +118,7 @@ module TTNT
     # @param args [String] argument to pass to ruby
     def run_ruby(args)
       ruby "#{args}" do |ok, status|
+        @failed = true if !ok
         if !ok && status.respond_to?(:signaled?) && status.signaled?
           raise SignalException.new(status.termsig)
         end
