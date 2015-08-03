@@ -40,5 +40,11 @@ module TTNT
       selector = TTNT::TestSelector.new(@repo, target_sha, @test_files)
       assert_includes selector.select_tests!, 'buzz_test.rb'
     end
+
+    def test_selects_all_tests_with_no_anchored_commit
+      git_rm_and_commit("#{@repo.workdir}/.ttnt", 'Remove .ttnt file')
+      selector = TTNT::TestSelector.new(@repo, @repo.head.target_id, @test_files)
+      assert_equal Set.new(['fizz_test.rb', 'buzz_test.rb']), selector.select_tests!
+    end
   end
 end
