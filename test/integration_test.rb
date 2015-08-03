@@ -23,6 +23,12 @@ module TTNT
         assert_equal "", output[:stdout]
       end
 
+      def test_all_tests_are_selected_without_mapping
+        git_rm_and_commit("#{@repo.workdir}/.ttnt", 'Remove .ttnt')
+        output = rake('ttnt:test:run')
+        assert_match '2 runs, 6 assertions, 0 failures', output[:stdout]
+      end
+
       def test_fizz_test_is_selected
         @repo.checkout('change_fizz')
         output = rake('ttnt:test:run')
