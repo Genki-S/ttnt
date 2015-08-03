@@ -44,6 +44,15 @@ module TTNT
         output = rake('ttnt:test:run')
         assert_match '2 runs, 2 assertions, 2 failures', output[:stdout]
       end
+
+      def test_isolated
+        # Make TTNT select all tests
+        git_rm_and_commit("#{@repo.workdir}/.ttnt", 'Remove .ttnt')
+        ENV['ISOLATED'] = '1'
+        output = rake('ttnt:test:run')
+        ENV.delete('ISOLATED')
+        assert_equal 3, output[:stdout].split('# Running:').count
+      end
     end
 
     class AdditionAmongComments < TTNT::TestCase::AdditionAmongComments

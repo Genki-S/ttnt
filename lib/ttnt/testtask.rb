@@ -71,10 +71,17 @@ module TTNT
         if tests.empty?
           STDERR.puts 'No test selected.'
         else
-          args =
-            "#{@rake_testtask.ruby_opts_string} #{@rake_testtask.run_code} " +
-            "#{tests.to_a.join(' ')} #{@rake_testtask.option_list}"
-          run_ruby args
+          if ENV['ISOLATED']
+            tests.each do |test|
+              args = "#{@rake_testtask.ruby_opts_string} #{test} #{@rake_testtask.option_list}"
+              run_ruby args
+            end
+          else
+            args =
+              "#{@rake_testtask.ruby_opts_string} #{@rake_testtask.run_code} " +
+              "#{tests.to_a.join(' ')} #{@rake_testtask.option_list}"
+            run_ruby args
+          end
         end
       end
     end
