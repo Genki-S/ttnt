@@ -21,6 +21,13 @@ module TTNT
       git_commit(index, message)
     end
 
+    def git_rm_and_commit(file, message)
+      index = @repo.index
+      index.read_tree(@repo.head.target.tree) unless @repo.empty?
+      index.remove(file.gsub(/^#{@repo.workdir}\//, ''))
+      git_commit(index, message)
+    end
+
     def git_checkout_b(branch)
       @repo.create_branch(branch)
       @repo.checkout(branch)
