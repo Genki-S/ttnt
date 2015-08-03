@@ -27,6 +27,12 @@ class StorageTest < TTNT::TestCase::FizzBuzz
       'History storage should not contain data from current working directory.'
   end
 
+  def test_read_absent_storage_from_history
+    git_rm_and_commit("#{@repo.workdir}/.ttnt", 'Remove .ttnt file')
+    storage = TTNT::Storage.new(@repo, @repo.head.target_id)
+    assert_equal Hash.new, storage.read(@section)
+  end
+
   def test_write_storage
     @storage.write!(@section, @data)
     assert File.exist?(@storage_file), 'Storage file should be created.'

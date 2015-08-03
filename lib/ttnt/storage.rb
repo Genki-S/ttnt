@@ -54,7 +54,12 @@ module TTNT
 
     def read_storage_content
       if @sha
-        @repo.lookup(@repo.lookup(@sha).tree['.ttnt'][:oid]).content
+        tree = @repo.lookup(@sha).tree
+        if tree['.ttnt']
+          @repo.lookup(@repo.lookup(@sha).tree['.ttnt'][:oid]).content
+        else
+          '' # Storage file is not committed for the commit of given sha
+        end
       else
         File.exist?(filename) ? File.read(filename) : ''
       end

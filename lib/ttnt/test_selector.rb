@@ -15,7 +15,8 @@ module TTNT
     # @param test_files [#include?] candidate test files
     def initialize(repo, target_sha, test_files)
       @repo = repo
-      @metadata = MetaData.new(repo, target_sha)
+      storage_src_sha = target_sha ? target_sha : @repo.head.target_id
+      @metadata = MetaData.new(repo, storage_src_sha)
       @target_obj = @repo.lookup(target_sha) if target_sha
 
       # Base should be the commit `ttnt:anchor` has run on.
@@ -30,7 +31,9 @@ module TTNT
     #
     # @return [Set] a set of tests that might be affected by changes in base_sha...target_sha
     def select_tests!
-      # TODO: if test-to-code-mapping is not found (ttnt-anchor has not been run)
+      # select all tests if anchored commit does not exist
+      return Set.new(@test_files) unless @base_obj
+
       @tests ||= Set.new
       diff = @target_obj ? @base_obj.diff(@target_obj) : @base_obj.diff_workdir
       diff.each_patch do |patch|
@@ -83,7 +86,11 @@ module TTNT
 
     # Find the commit `rake ttnt:test:anchor` has been run on.
     def find_anchored_commit
-      @repo.lookup(@metadata['anchored_commit'])
+      if @metadata['anchored_commit']
+        @repo.lookup(@metadata['anchored_commit'])
+      else
+        nil
+      end
     end
 
     # Check if given file is a test file.
