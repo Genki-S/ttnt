@@ -13,10 +13,8 @@ module TTNT
     end
 
     def rake(task)
-      Dir.chdir(@repo.workdir) do
-        result = capture { Rake::Task[task].execute }
-        block_given? ? yield(result) : result
-      end
+      result = capture { Rake::Task[task].execute }
+      block_given? ? yield(result) : result
     end
   end
 end

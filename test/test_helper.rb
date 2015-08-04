@@ -23,13 +23,15 @@ module TTNT
 
       def before_setup
         super
-        prepare_git_repository
-        @pwd = Dir.pwd
+        @save_pwd = Dir.pwd
+        @tmpdir = Dir.mktmpdir('ttnt_repository')
+        @repo = Rugged::Repository.init_at(@tmpdir)
         Dir.chdir(@repo.workdir)
+        prepare_git_repository
       end
 
       def after_teardown
-        Dir.chdir(@pwd)
+        Dir.chdir(@save_pwd)
         FileUtils.remove_entry_secure(@tmpdir)
         super
       end
@@ -37,8 +39,6 @@ module TTNT
       private
 
       def prepare_git_repository
-        @tmpdir = Dir.mktmpdir('ttnt_repository')
-        @repo = Rugged::Repository.init_at(@tmpdir)
         populate_with_fixtures
         load_rakefile("#{@tmpdir}/Rakefile")
         anchor_and_commit
