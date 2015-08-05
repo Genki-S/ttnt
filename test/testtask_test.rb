@@ -38,4 +38,15 @@ class TestTaskTest < Minitest::Test
     ttnt_task = TTNT::TestTask.new
     assert_equal default_rake_task.name, ttnt_task.instance_variable_get(:@rake_testtask).name
   end
+
+  def test_yield_and_configure
+    test_files = ['foo_test.rb', 'bar_test.rb']
+    code_files = ['foo.rb', 'bar.rb']
+    ttnt_task = TTNT::TestTask.new { |t|
+      t.test_files = test_files
+      t.code_files = code_files
+    }
+    assert_equal test_files, ttnt_task.test_files
+    assert_equal code_files, ttnt_task.code_files
+  end
 end
