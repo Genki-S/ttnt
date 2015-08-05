@@ -1,3 +1,4 @@
+require 'ttnt/ttnt_module'
 require 'ttnt/storage'
 require 'rugged'
 require 'json'
@@ -15,7 +16,6 @@ module TTNT
     attr_reader :mapping
 
     # @param repo [Rugged::Reposiotry] repository to save test-to-code mapping
-    #   (only repo.workdir is used to determine where to save the mapping file)
     # @param sha [String] sha of commit from which mapping is read.
     #   nil means to read from current working tree. see {Storage} for more.
     def initialize(repo, sha = nil)
@@ -71,7 +71,7 @@ module TTNT
     # @param file [String] file name (absolute path)
     # @return [String] normalized file path
     def normalized_path(file)
-      File.expand_path(file).sub(@repo.workdir, '')
+      File.expand_path(file).sub("#{TTNT.root_dir}/", '')
     end
 
     # Normalize all file names in a spectra.
@@ -90,7 +90,7 @@ module TTNT
     # @return [Hash] spectra with only files inside the target project
     def select_project_files(spectra)
       spectra.select do |filename, lines|
-        filename.start_with?(@repo.workdir)
+        filename.start_with?(TTNT.root_dir)
       end
     end
 
