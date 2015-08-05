@@ -51,11 +51,16 @@ class StorageTest < TTNT::TestCase::FizzBuzz
     Dir.mkdir(subdir)
     rakefiles = ["#{@repo.workdir}/Rakefile", "#{subdir}/Rakefile"]
     FileUtils.copy rakefiles[0], rakefiles[1]
+
+    TTNT.instance_variable_set(:@root_dir, nil)
     load_rakefile(rakefiles)
+
     Dir.chdir(subdir) do
       storage = TTNT::Storage.new(@repo)
       assert_equal Hash.new, storage.read(@section)
+
       File.delete(rakefiles[1])
+      TTNT.instance_variable_set(:@root_dir, nil)
       assert_equal @data, storage.read(@section)
     end
   end
