@@ -1,3 +1,5 @@
+require 'ttnt/ttnt_module'
+
 module TTNT
   # A utility class to store TTNT data such as test-to-code mapping and metadata.
   class Storage
@@ -49,7 +51,7 @@ module TTNT
     private
 
     def filename
-      "#{@repo.workdir}/.ttnt"
+      "#{TTNT.root_dir}/.ttnt"
     end
 
     def read_storage_content

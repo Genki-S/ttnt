@@ -44,4 +44,19 @@ class StorageTest < TTNT::TestCase::FizzBuzz
     history_storage = TTNT::Storage.new(@repo, sha)
     assert_raises { history_storage.write!(@section, @data) }
   end
+
+  def test_storage_file_resides_with_rakefile
+    @storage.write!(@section, @data)
+    subdir = "#{@repo.workdir}/tmp"
+    Dir.mkdir(subdir)
+    rakefiles = ["#{@repo.workdir}/Rakefile", "#{subdir}/Rakefile"]
+    FileUtils.copy rakefiles[0], rakefiles[1]
+    load_rakefile(rakefiles)
+    Dir.chdir(subdir) do
+      storage = TTNT::Storage.new(@repo)
+      assert_equal Hash.new, storage.read(@section)
+      File.delete(rakefiles[1])
+      assert_equal @data, storage.read(@section)
+    end
+  end
 end
