@@ -1,5 +1,6 @@
 require 'rugged'
 require 'rake'
+require 'rake/testtask'
 require 'ttnt/test_selector'
 
 module TTNT
@@ -18,8 +19,8 @@ module TTNT
     # Create an instance of TTNT::TestTask and define TTNT rake tasks.
     #
     # @param rake_testtask [Rake::TestTask] an instance of Rake::TestTask after user configuration is done
-    def initialize(rake_testtask)
-      @rake_testtask = rake_testtask
+    def initialize(rake_testtask = nil)
+      @rake_testtask = rake_testtask || Rake::TestTask.new
       # Since test_files is not exposed in Rake::TestTask
       @test_files = @rake_testtask.instance_variable_get('@test_files')
 

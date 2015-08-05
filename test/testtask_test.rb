@@ -32,4 +32,10 @@ class TestTaskTest < Minitest::Test
     test_files = Rake::FileList['test/**/*_test.rb'] + ['test/dummy_test.rb']
     assert_equal test_files, @ttnt_task.expanded_file_list
   end
+
+  def test_instance_without_passing_rake_task
+    default_rake_task = Rake::TestTask.new
+    ttnt_task = TTNT::TestTask.new
+    assert_equal default_rake_task.name, ttnt_task.instance_variable_get(:@rake_testtask).name
+  end
 end
