@@ -29,4 +29,10 @@ class TestToCodeMappingTest < TTNT::TestCase::FizzBuzz
     assert_equal Set.new([@test_file]),
       @test_to_code_mapping.get_tests(file: 'fizzbuzz.rb', lineno: 2)
   end
+
+  def test_select_code_files
+    @test_to_code_mapping.select_code_files!([])
+    assert_equal Set.new([]),
+      @test_to_code_mapping.get_tests(file: 'fizzbuzz.rb', lineno: 3)
+  end
 end
