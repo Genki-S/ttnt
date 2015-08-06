@@ -122,6 +122,12 @@ module TTNT
             run_ruby "#{args} #{test_file}"
           end
         end
+
+        if @code_files
+          mapping = TestToCodeMapping.new(repo)
+          mapping.select_code_files!(@code_files)
+          mapping.write!
+        end
       end
     end
 

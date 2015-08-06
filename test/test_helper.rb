@@ -124,5 +124,16 @@ module TTNT
         # do nothing
       end
     end
+
+    class FizzBuzzMultiCode < Base
+      def fixture_dir
+        File.join(__dir__, 'fixtures/fizzbuzz_multicode')
+      end
+
+      private
+
+      def after_preparing_git_repository
+      end
+    end
   end
 end

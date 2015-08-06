@@ -109,5 +109,20 @@ module TTNT
         assert_match '1 runs, 1 assertions, 1 failures', output[:stdout]
       end
     end
+
+    class FizzBuzzMultiCode < TTNT::TestCase::FizzBuzzMultiCode
+      def test_code_files_option
+        fn = 'fizzbuzz.rb'
+        File.write(fn, File.read(fn).gsub(/"fizzbuzz"$/, "foo"))
+        output = rake('ttnt:test:run')
+        assert_match 'No test selected.', output[:stderr],
+          'Changing files which is not specified in code_files should not select tests.'
+
+        fn = 'fizz_detectable.rb'
+        File.write(fn, File.read(fn).gsub(/n % 3 == 0$/, "n % 3 == 1"))
+        output = rake('ttnt:test:run')
+        assert_match "Failure:\nTestFizz#test_fizz", output[:stdout]
+      end
+    end
   end
 end
