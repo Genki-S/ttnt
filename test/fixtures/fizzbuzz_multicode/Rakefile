@@ -1,0 +1,8 @@
+require 'ttnt/testtask'
+
+TTNT::TestTask.new do |t|
+  t.test_files = ['fizz_test.rb', 'buzz_test.rb', 'fizzbuzz_test.rb']
+  t.code_files = ['fizz_detectable.rb', 'buzz_detectable.rb', 'fizzbuzz_detectable.rb']
+end
+
+task :default => :test
