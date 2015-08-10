@@ -104,6 +104,20 @@ If you defined TTNT rake task as described above, you can run following command 
 $ rake ttnt:my_test_name:run
 ```
 
+#### Options
+
+You can run test files one by one by setting `ISOLATED` environment variable:
+
+```
+$ rake ttnt:my_test_name:run ISOLATED=1
+```
+
+With isolated option, you can set `FAIL_FAST` environment variable to stop running successive tests after a test has failed:
+
+```
+$ rake ttnt:my_test_name:run ISOLATED=1 FAIL_FAST=1
+```
+
 ## Current Limitations
 
 - Test selection algorithm is not perfect yet (it may produce false-positives and false-negatives)
