@@ -50,8 +50,9 @@ module TTNT
         git_rm_and_commit("#{@repo.workdir}/.ttnt", 'Remove .ttnt')
         ENV['ISOLATED'] = '1'
         output = rake('ttnt:test:run')
-        ENV.delete('ISOLATED')
         assert_equal 3, output[:stdout].split('# Running:').count
+      ensure
+        ENV.delete('ISOLATED')
       end
 
       def test_isolated_with_fail_fast
@@ -61,9 +62,10 @@ module TTNT
         ENV['ISOLATED'] = '1'
         ENV['FAIL_FAST'] = '1'
         output = rake('ttnt:test:run')
+        assert_equal 2, output[:stdout].split('Failure:').count
+      ensure
         ENV.delete('ISOLATED')
         ENV.delete('FAIL_FAST')
-        assert_equal 2, output[:stdout].split('Failure:').count
       end
     end
 
