@@ -44,6 +44,29 @@ module TTNT
         output = rake('ttnt:test:run')
         assert_match '2 runs, 2 assertions, 2 failures', output[:stdout]
       end
+
+      def test_isolated
+        # Make TTNT select all tests
+        git_rm_and_commit("#{@repo.workdir}/.ttnt", 'Remove .ttnt')
+        ENV['ISOLATED'] = '1'
+        output = rake('ttnt:test:run')
+        assert_equal 3, output[:stdout].split('# Running:').count
+      ensure
+        ENV.delete('ISOLATED')
+      end
+
+      def test_isolated_with_fail_fast
+        @repo.checkout('change_fizz')
+        fizzbuzz_file = "#{@repo.workdir}/fizzbuzz.rb"
+        File.write(fizzbuzz_file, File.read(fizzbuzz_file).gsub(/"buzz"$/, '"bar"'))
+        ENV['ISOLATED'] = '1'
+        ENV['FAIL_FAST'] = '1'
+        output = rake('ttnt:test:run')
+        assert_equal 2, output[:stdout].split('Failure:').count
+      ensure
+        ENV.delete('ISOLATED')
+        ENV.delete('FAIL_FAST')
+      end
     end
 
     class AdditionAmongComments < TTNT::TestCase::AdditionAmongComments
