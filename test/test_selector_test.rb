@@ -6,7 +6,7 @@ module TTNT
     def setup
       target_sha = @repo.branches['change_fizz'].target.oid
       master_sha = @repo.branches['master'].target.oid
-      @test_files = Rake::FileList['*_test.rb']
+      @test_files = Rake::FileList['**/*_test.rb']
       @selector = TTNT::TestSelector.new(@repo, target_sha, @test_files)
     end
 
@@ -45,6 +45,14 @@ module TTNT
       git_rm_and_commit("#{@repo.workdir}/.ttnt", 'Remove .ttnt file')
       selector = TTNT::TestSelector.new(@repo, @repo.head.target_id, @test_files)
       assert_equal Set.new(['fizz_test.rb', 'buzz_test.rb']), selector.select_tests!
+    end
+
+    def test_selects_untracked_test_files
+      FileUtils.mkdir('test')
+      new_test = 'test/new_test.rb'
+      FileUtils.touch(new_test)
+      selector = TTNT::TestSelector.new(@repo, nil, @test_files)
+      assert_equal Set.new([new_test]), selector.select_tests!
     end
   end
 end
