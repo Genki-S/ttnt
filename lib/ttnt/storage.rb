@@ -74,8 +74,7 @@ module TTNT
 
     def read_storage_content
       if @sha
-        oid = storage_file_oid
-        if oid
+        if oid = storage_file_oid
           @repo.lookup(oid).content
         else
           '' # Storage file is not committed for the commit of given sha
