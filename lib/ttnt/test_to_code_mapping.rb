@@ -1,4 +1,4 @@
-require 'ttnt/ttnt_module'
+require 'ttnt/internals'
 require 'ttnt/storage'
 require 'rugged'
 require 'json'

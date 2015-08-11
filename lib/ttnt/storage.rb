@@ -1,4 +1,4 @@
-require 'ttnt/ttnt_module'
+require 'ttnt/internals'
 
 module TTNT
   # A utility class to store TTNT data such as test-to-code mapping and metadata.
