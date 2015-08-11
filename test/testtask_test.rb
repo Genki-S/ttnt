@@ -36,7 +36,7 @@ class TestTaskTest < Minitest::Test
   def test_instance_without_passing_rake_task
     default_rake_task = Rake::TestTask.new
     ttnt_task = TTNT::TestTask.new
-    assert_equal default_rake_task.name, ttnt_task.instance_variable_get(:@rake_testtask).name
+    assert ttnt_task.instance_variable_get(:@rake_testtask).kind_of?(Rake::TestTask)
   end
 
   def test_yield_and_configure
