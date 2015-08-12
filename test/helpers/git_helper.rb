@@ -26,6 +26,7 @@ module TTNT
       index.read_tree(@repo.head.target.tree) unless @repo.empty?
       index.remove(file.gsub(/^#{@repo.workdir}\//, ''))
       git_commit(index, message)
+      File.delete(file) if File.exist?(file)
     end
 
     def git_checkout_b(branch)

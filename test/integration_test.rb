@@ -80,7 +80,6 @@ module TTNT
       def test_storage_file_resides_with_rakefile
         Dir.mkdir('tmp')
         git_rm_and_commit("#{@repo.workdir}/.ttnt", 'Remove .ttnt file')
-        File.delete("#{@repo.workdir}/.ttnt")
         %w(fizzbuzz.rb fizz_test.rb buzz_test.rb Rakefile).each do |file|
           FileUtils.mv file, 'tmp'
           git_rm_and_commit(file, "Remove #{file}")
