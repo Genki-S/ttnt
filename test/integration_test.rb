@@ -72,7 +72,7 @@ module TTNT
         FileUtils.mkdir('test')
         fizz_test = './fizz_test.rb'
         File.write(fizz_test, File.read(fizz_test).gsub("require_relative '\.", "require_relative '.."))
-        FileUtils.mv('./fizz_test.rb', './test/fizz_test.rb')
+        FileUtils.mv(fizz_test, './test/fizz_test.rb')
         output = rake('ttnt:test:run')
         assert_match '1 runs, 3 assertions, 0 failures', output[:stdout]
       end
