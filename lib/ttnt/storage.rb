@@ -22,6 +22,7 @@ module TTNT
     # @return [Hash]
     def read(section)
       str = read_storage_content
+
       if str.length > 0
         JSON.parse(str)[section] || {}
       else

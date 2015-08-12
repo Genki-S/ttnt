@@ -35,11 +35,13 @@ module TTNT
       return Set.new(@test_files) unless @base_obj
 
       @tests ||= Set.new
+
       opts = {
         include_untracked: true,
         recurse_untracked_dirs: true
       }
       diff = @target_obj ? @base_obj.diff(@target_obj, opts) : @base_obj.diff_workdir(opts)
+
       diff.each_patch do |patch|
         file = patch.delta.old_file[:path]
         if test_file?(file)
@@ -54,8 +56,10 @@ module TTNT
     private
 
     def mapping
-      sha = @target_obj ? @target_obj.oid : @repo.head.target_id
-      @mapping ||= TTNT::TestToCodeMapping.new(@repo, sha)
+      @mapping ||= begin
+        sha = @target_obj ? @target_obj.oid : @repo.head.target_id
+        TTNT::TestToCodeMapping.new(@repo, sha)
+      end
     end
 
     # Select tests which are affected by the change of given patch.
@@ -66,6 +70,7 @@ module TTNT
       target_lines = Set.new
       file = patch.delta.old_file[:path]
       prev_line = nil
+
       patch.each_hunk do |hunk|
         hunk.each_line do |line|
           case line.line_origin

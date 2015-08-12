@@ -71,6 +71,7 @@ module TTNT
         target_sha = ENV['TARGET_SHA']
         ts = TTNT::TestSelector.new(repo, target_sha, expanded_file_list)
         tests = ts.select_tests!
+
         if tests.empty?
           STDERR.puts 'No test selected.'
         else
