@@ -34,7 +34,7 @@ module TTNT
         Dir.chdir(@save_pwd)
         FileUtils.remove_entry_secure(@tmpdir)
         # remove cache
-        TTNT.instance_variable_set(:@root_dir, nil)
+        TTNT.root_dir = nil
         super
       end
 
