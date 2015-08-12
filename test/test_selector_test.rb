@@ -5,7 +5,6 @@ module TTNT
   class TestSelectorTest < TTNT::TestCase::FizzBuzz
     def setup
       target_sha = @repo.branches['change_fizz'].target.oid
-      master_sha = @repo.branches['master'].target.oid
       @test_files = Rake::FileList['**/*_test.rb']
       @selector = TTNT::TestSelector.new(@repo, target_sha, @test_files)
     end
@@ -36,7 +35,6 @@ module TTNT
       git_checkout_b('change_buzz_test') # from master
       git_commit_am('Change buzz_test')
       target_sha = @repo.head.target_id
-      master_sha = @repo.branches['master'].target.oid
       selector = TTNT::TestSelector.new(@repo, target_sha, @test_files)
       assert_includes selector.select_tests!, 'buzz_test.rb'
     end

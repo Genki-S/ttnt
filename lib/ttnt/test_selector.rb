@@ -40,7 +40,7 @@ module TTNT
         include_untracked: true,
         recurse_untracked_dirs: true
       }
-      diff = @target_obj ? @base_obj.diff(@target_obj, opts) : @base_obj.diff_workdir(opts)
+      diff = defined?(@target_obj) ? @base_obj.diff(@target_obj, opts) : @base_obj.diff_workdir(opts)
 
       diff.each_patch do |patch|
         file = patch.delta.old_file[:path]
@@ -57,7 +57,7 @@ module TTNT
 
     def mapping
       @mapping ||= begin
-        sha = @target_obj ? @target_obj.oid : @repo.head.target_id
+        sha = defined?(@target_obj) ? @target_obj.oid : @repo.head.target_id
         TTNT::TestToCodeMapping.new(@repo, sha)
       end
     end
