@@ -4,7 +4,7 @@ require 'ttnt/metadata'
 require 'ttnt/test_to_code_mapping'
 
 module TTNT
-  # Select tests using git information and {TestToCodeMapping}.
+  # Select tests using Git information and {TestToCodeMapping}.
   class TestSelector
 
     attr_reader :tests
@@ -88,7 +88,7 @@ module TTNT
       end
     end
 
-    # Find the commit `rake ttnt:test:anchor` has been run on.
+    # Find the commit `ttnt:anchor` has been run on.
     def find_anchored_commit
       if @metadata['anchored_commit']
         @repo.lookup(@metadata['anchored_commit'])
@@ -97,7 +97,7 @@ module TTNT
       end
     end
 
-    # Check if given file is a test file.
+    # Check if the given file is a test file.
     #
     # @param filename [String]
     def test_file?(filename)
