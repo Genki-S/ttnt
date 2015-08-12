@@ -35,7 +35,11 @@ module TTNT
       return Set.new(@test_files) unless @base_obj
 
       @tests ||= Set.new
-      diff = @target_obj ? @base_obj.diff(@target_obj) : @base_obj.diff_workdir
+      opts = {
+        include_untracked: true,
+        recurse_untracked_dirs: true
+      }
+      diff = @target_obj ? @base_obj.diff(@target_obj, opts) : @base_obj.diff_workdir(opts)
       diff.each_patch do |patch|
         file = patch.delta.old_file[:path]
         if test_file?(file)
