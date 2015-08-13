@@ -76,6 +76,29 @@ module TTNT
         output = rake('ttnt:test:run')
         assert_match '1 runs, 3 assertions, 0 failures', output[:stdout]
       end
+
+      def test_storage_file_resides_with_rakefile
+        Dir.mkdir('tmp')
+        git_rm_and_commit("#{@repo.workdir}/.ttnt", 'Remove .ttnt file')
+        %w(fizzbuzz.rb fizz_test.rb buzz_test.rb Rakefile).each do |file|
+          FileUtils.mv file, 'tmp'
+          git_rm_and_commit(file, "Remove #{file}")
+        end
+        git_commit_am("Move files into tmp")
+
+        Dir.chdir('tmp')
+        load_rakefile("#{Dir.pwd}/Rakefile")
+
+        # Test writing to storage
+        rake('ttnt:test:anchor')
+        assert File.exist?("#{@repo.workdir}/tmp/.ttnt")
+        assert !File.exist?("#{@repo.workdir}/.ttnt")
+        git_commit_am('Add new .ttnt file under tmp directory')
+
+        # Test reading from storage
+        output = rake('ttnt:test:run')
+        assert_match 'No test selected.', output[:stderr]
+      end
     end
 
     class AdditionAmongComments < TTNT::TestCase::AdditionAmongComments

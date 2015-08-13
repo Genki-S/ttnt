@@ -1,3 +1,5 @@
+require 'ttnt/internals'
+
 module TTNT
   # A utility class to store TTNT data such as test-to-code mapping and metadata.
   class Storage
@@ -49,14 +51,31 @@ module TTNT
     private
 
     def filename
-      "#{@repo.workdir}/.ttnt"
+      "#{TTNT.root_dir}/.ttnt"
+    end
+
+    def filename_from_repository_root
+      filename.gsub(@repo.workdir, '')
+    end
+
+    def storage_file_oid
+      tree = @repo.lookup(@sha).tree
+      paths = filename_from_repository_root.split(File::SEPARATOR)
+      dirs, filename = paths[0...-1], paths[-1]
+      dirs.each do |dir|
+        obj = tree[dir]
+        return nil unless obj
+        tree = @repo.lookup(obj[:oid])
+      end
+      obj = tree[filename]
+      return nil unless obj
+      obj[:oid]
     end
 
     def read_storage_content
       if @sha
-        tree = @repo.lookup(@sha).tree
-        if tree['.ttnt']
-          @repo.lookup(@repo.lookup(@sha).tree['.ttnt'][:oid]).content
+        if oid = storage_file_oid
+          @repo.lookup(oid).content
         else
           '' # Storage file is not committed for the commit of given sha
         end
