@@ -40,13 +40,13 @@ class TestTaskTest < Minitest::Test
   end
 
   def test_yield_and_configure
-    test_files = ['foo_test.rb', 'bar_test.rb']
+    test_files = 'foo_test'
     code_files = ['foo.rb', 'bar.rb']
     ttnt_task = TTNT::TestTask.new { |t|
       t.test_files = test_files
       t.code_files = code_files
     }
-    assert_equal test_files, ttnt_task.test_files
+    assert_equal FileList[test_files], ttnt_task.test_files
     assert_equal code_files, ttnt_task.code_files
   end
 end

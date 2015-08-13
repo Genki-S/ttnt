@@ -16,8 +16,16 @@ module TTNT
     # An instance of `Rake::TestTask` passed when TTNT::TestTask is initialized
     attr_accessor :rake_testtask
 
-    attr_accessor :test_files
-    attr_accessor :code_files
+    attr_reader :test_files
+    attr_reader :code_files
+
+    def code_files=(files)
+      @code_files = files.kind_of?(String) ? FileList[files] : files
+    end
+
+    def test_files=(files)
+      @test_files = files.kind_of?(String) ? FileList[files] : files
+    end
 
     # Create an instance of TTNT::TestTask and define TTNT rake tasks.
     #
