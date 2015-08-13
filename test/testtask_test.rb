@@ -40,12 +40,16 @@ class TestTaskTest < Minitest::Test
   end
 
   def test_yield_and_configure
+    name = 'testname'
     test_files = 'foo_test'
     code_files = ['foo.rb', 'bar.rb']
     ttnt_task = TTNT::TestTask.new { |t|
+      t.name = name
       t.test_files = test_files
       t.code_files = code_files
     }
+    assert Rake::Task.task_defined?("ttnt:#{name}:anchor"),
+      "`ttnt:#{name}:anchor` task should be defined"
     assert_equal FileList[test_files], ttnt_task.test_files
     assert_equal code_files, ttnt_task.code_files
   end

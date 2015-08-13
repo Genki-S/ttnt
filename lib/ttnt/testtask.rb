@@ -16,6 +16,7 @@ module TTNT
     # An instance of `Rake::TestTask` passed when TTNT::TestTask is initialized
     attr_accessor :rake_testtask
 
+    attr_accessor :name
     attr_reader :test_files
     attr_reader :code_files
 
@@ -32,12 +33,16 @@ module TTNT
     # @param rake_testtask [Rake::TestTask] an instance of Rake::TestTask after user configuration is done
     def initialize(rake_testtask = nil)
       @rake_testtask = rake_testtask || Rake::TestTask.new
-      # Since test_files is not exposed in Rake::TestTask
-      @test_files = @rake_testtask.instance_variable_get('@test_files')
 
+      # Make configurations consistent between TTNT::TestTask and Rake::TestTask
+      # 1. Copy options from @rake_testtask to self
+      @test_files = @rake_testtask.instance_variable_get('@test_files')
+      @name = @rake_testtask.name
+      # 2. Execute configuration block
       yield self if block_given?
-      # Apply configuration from given block to @rake_testtask
+      # 3. Apply configuration from given block back to @rake_testtask
       @rake_testtask.test_files = @test_files
+      @rake_testtask.name = @name
 
       @anchor_description = 'Generate test-to-code mapping' + (@rake_testtask.name == :test ? '' : " for #{@rake_testtask.name}")
       @run_description = 'Run selected tests' + (@rake_testtask.name == :test ? '' : "for #{@rake_testtask.name}")
