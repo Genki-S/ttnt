@@ -22,34 +22,44 @@ module TTNT
 
     def test_selects_tests_from_current_working_tree
       @repo.checkout('change_fizz')
+
       # Change buzz too
       fizzbuzz_file = "#{@repo.workdir}/fizzbuzz.rb"
+      selector      = TTNT::TestSelector.new(@repo, nil, @test_files)
+
       File.write(fizzbuzz_file, File.read(fizzbuzz_file).gsub(/"buzz"$/, '"bar"'))
-      selector = TTNT::TestSelector.new(@repo, nil, @test_files)
+
       assert_equal Set.new(['fizz_test.rb', 'buzz_test.rb']), selector.select_tests!
     end
 
     def test_selects_tests_with_changed_test_file
       buzz_test = "#{@repo.workdir}/buzz_test.rb"
+
       File.write(buzz_test, File.read(buzz_test) + "\n") # meaningless change
+
       git_checkout_b('change_buzz_test') # from master
       git_commit_am('Change buzz_test')
+
       target_sha = @repo.head.target_id
-      selector = TTNT::TestSelector.new(@repo, target_sha, @test_files)
+      selector   = TTNT::TestSelector.new(@repo, target_sha, @test_files)
+
       assert_includes selector.select_tests!, 'buzz_test.rb'
     end
 
     def test_selects_all_tests_with_no_anchored_commit
       git_rm_and_commit("#{@repo.workdir}/.ttnt", 'Remove .ttnt file')
       selector = TTNT::TestSelector.new(@repo, @repo.head.target_id, @test_files)
+
       assert_equal Set.new(['fizz_test.rb', 'buzz_test.rb']), selector.select_tests!
     end
 
     def test_selects_untracked_test_files
-      FileUtils.mkdir('test')
       new_test = 'test/new_test.rb'
-      FileUtils.touch(new_test)
       selector = TTNT::TestSelector.new(@repo, nil, @test_files)
+
+      FileUtils.mkdir('test')
+      FileUtils.touch(new_test)
+
       assert_equal Set.new([new_test]), selector.select_tests!
     end
   end
