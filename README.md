@@ -58,29 +58,43 @@ Or install it yourself as:
 
     $ gem install ttnt
 
-### Define rake tasks
+### Define Rake tasks
 
-You can define TTNT rake tasks by following steps:
+TTNT allows you to define its tasks according to an existing `Rake::TestTask` object like:
 
-1. `require 'ttnt/testtask'`
-2. Define `TTNT::TestTask` when defining `Rake::TestTask`
-
-Your `Rakefile` will look like this:
-
-```
+```ruby
 require 'rake/testtask'
 require 'ttnt/testtask'
 
-Rake::TestTask.new { |t|
-  t.name = 'my_test_name'
+t = Rake::TestTask.new do |t|
   t.libs << 'test'
-  t.pattern = 'test/**/*_test.rb'
-  TTNT::TestTask.new(t)
-}
+  t.name = 'task_name'
+end
+
+TTNT::TestTask.new(t)
 ```
 
-This will define 2 rake tasks `ttnt:my_test_name:anchor` and `ttnt:my_test_name:run` (portion of `my_test_name` depends on the name you specify for your `Rake::TestTask`).
-Usage for those tasks are described later in this document.
+This will define 2 tasks: `ttnt:task_name:anchor` and `ttnt:task_name:run`. Usage for those tasks are described later in this document.
+
+You can also instantiate a new `TTNT::TestTask` object and specify certain options like:
+
+```ruby
+require 'ttnt/testtask'
+
+TTNT::TestTask.new do |t|
+  t.code_files = FileList['lib/**/*.rb'] - FileList['lib/vendor/**/*.rb']
+  t.test_files = 'test/**/*_test.rb'
+end
+```
+
+Available options are as follows:
+
+- `name`
+  - Specifies task name.
+- `code_files`
+  - Specifies code files TTNT uses to select tests. Changes in files not listed here do not affect the test selection. Defaults to all files under the directory `Rakefile` resides.
+- `test_files`
+  - Specifies test files. Defaults to the default value of `Rake::TestTask`.
 
 ## Requirements
 
@@ -92,7 +106,7 @@ Developed and only tested under ruby version 2.2.2.
 
 If you defined TTNT rake task as described above, you can run following command to produce test-to-code mapping:
 
-```
+```sh
 $ rake ttnt:my_test_name:anchor
 ```
 
@@ -100,7 +114,7 @@ $ rake ttnt:my_test_name:anchor
 
 If you defined TTNT rake task as described above, you can run following command to run selected tests.
 
-```
+```sh
 $ rake ttnt:my_test_name:run
 ```
 
