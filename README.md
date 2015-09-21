@@ -87,14 +87,11 @@ TTNT::TestTask.new do |t|
 end
 ```
 
-Available options are as follows:
+You can specify the same options as `Rake::TestTask`.
+Additionally, there is an option which is specific to TTNT:
 
-- `name`
-  - Specifies task name.
 - `code_files`
   - Specifies code files TTNT uses to select tests. Changes in files not listed here do not affect the test selection. Defaults to all files under the directory `Rakefile` resides.
-- `test_files`
-  - Specifies test files. Defaults to the default value of `Rake::TestTask`.
 
 ## Requirements
 
