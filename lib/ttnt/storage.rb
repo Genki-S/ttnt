@@ -4,24 +4,25 @@ module TTNT
   # A utility class to store TTNT data such as test-to-code mapping and metadata.
   class Storage
     # Initialize the storage from given repo and sha. This reads contents from
-    # a file `.ttnt`. When sha is not nil, contents of the file on that commit
+    # a `.ttnt` file. When sha is not nil, contents of the file on that commit
     # is read. Data can be written only when sha is nil (written to current
     # working tree).
     #
     # @param repo [Rugged::Repository]
-    # @param sha [String] sha of the commit from which data should be read.
+    # @param sha [String] sha of the commit which data should be read from.
     #   nil means reading from/writing to current working tree.
     def initialize(repo, sha = nil)
       @repo = repo
       @sha = sha
     end
 
-    # Read data in section from the storage.
+    # Read data from the storage in the given section.
     #
     # @param section [String]
     # @return [Hash]
     def read(section)
       str = read_storage_content
+
       if str.length > 0
         JSON.parse(str)[section] || {}
       else
@@ -29,7 +30,7 @@ module TTNT
       end
     end
 
-    # Write value to section in the storage.
+    # Write value to the given section in the storage.
     # Locks the file so that concurrent write does not occur.
     #
     # @param section [String]

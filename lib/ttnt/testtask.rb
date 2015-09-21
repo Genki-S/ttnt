@@ -4,7 +4,10 @@ require 'ttnt/test_selector'
 
 module TTNT
   # TTNT version of Rake::TestTask.
-  # Uses configuration from Rake::TestTask to minimize user configuration.
+  #
+  # You can use the configuration from a Rake::TestTask to minimize user
+  # configuration.
+  #
   # Defines TTNT related rake tasks when instantiated.
   class TestTask
     include Rake::DSL
@@ -56,8 +59,8 @@ module TTNT
       end
     end
 
-    # Define a task which runs only tests which might have affected from changes
-    # between anchored commit and TARGET_SHA.
+    # Define a task which runs only tests which might have been affected from
+    # changes between anchored commit and TARGET_SHA.
     #
     # TARGET_SHA can be specified as an environment variable (defaults to HEAD).
     #
@@ -68,6 +71,7 @@ module TTNT
         target_sha = ENV['TARGET_SHA']
         ts = TTNT::TestSelector.new(repo, target_sha, expanded_file_list)
         tests = ts.select_tests!
+
         if tests.empty?
           STDERR.puts 'No test selected.'
         else
@@ -87,7 +91,7 @@ module TTNT
       end
     end
 
-    # Define a task which runs test files file by file, and generate and save
+    # Define a task which runs tests file by file, and generate and save
     # test-to-code mapping.
     #
     # @return [void]

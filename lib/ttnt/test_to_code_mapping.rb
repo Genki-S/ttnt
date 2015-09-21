@@ -17,12 +17,11 @@ module TTNT
 
     # @param repo [Rugged::Reposiotry] repository to save test-to-code mapping
     # @param sha [String] sha of commit from which mapping is read.
-    #   nil means to read from current working tree. see {Storage} for more.
+    #   nil means to read from current working tree. See {Storage} for more.
     def initialize(repo, sha = nil)
-      @repo = repo
+      @repo    = repo || raise('Not in a git repository')
       @storage = Storage.new(repo, sha)
       read!
-      raise 'Not in a git repository' unless @repo
     end
 
     # Append the new mapping to test-to-code mapping file.
@@ -66,7 +65,7 @@ module TTNT
 
     private
 
-    # Convert absolute path to relative path from the project (git repository) root.
+    # Convert absolute path to relative path from the project (Git repository) root.
     #
     # @param file [String] file name (absolute path)
     # @return [String] normalized file path
