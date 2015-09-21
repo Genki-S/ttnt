@@ -1,5 +1,4 @@
 require 'rugged'
-require 'rake'
 require 'rake/testtask'
 require 'ttnt/test_selector'
 
@@ -13,12 +12,33 @@ module TTNT
   class TestTask
     include Rake::DSL
 
-    # An instance of `Rake::TestTask` passed when TTNT::TestTask is initialized
     attr_accessor :rake_testtask
+    attr_reader   :code_files, :test_files
 
-    attr_accessor :name
-    attr_reader :test_files
-    attr_reader :code_files
+    # Create an instance of TTNT::TestTask and define TTNT rake tasks.
+    #
+    # @param rake_testtask [Rake::TestTask] an instance of Rake::TestTask
+    #   after user configuration is done
+    def initialize(rake_testtask = nil)
+      @rake_testtask = rake_testtask || Rake::TestTask.new
+
+      # There's no `test_files` method so we can't delegate it
+      # to the internal task through `method_missing`.
+      @test_files = @rake_testtask.instance_variable_get('@test_files')
+
+      yield self if block_given?
+
+      @anchor_description = 'Generate test-to-code mapping' + (name == :test ? '' : " for #{name}")
+      @run_description = 'Run selected tests' + (name = :test ? '' : " for #{name}")
+      define_tasks
+    end
+
+    # Delegate missing methods to the internal task
+    # so we can override the defaults during the
+    # block execution.
+    def method_missing(method, *args, &block)
+      @rake_testtask.public_send(method, *args, &block)
+    end
 
     def code_files=(files)
       @code_files = files.kind_of?(String) ? FileList[files] : files
@@ -28,31 +48,10 @@ module TTNT
       @test_files = files.kind_of?(String) ? FileList[files] : files
     end
 
-    # Create an instance of TTNT::TestTask and define TTNT rake tasks.
-    #
-    # @param rake_testtask [Rake::TestTask] an instance of Rake::TestTask after user configuration is done
-    def initialize(rake_testtask = nil)
-      @rake_testtask = rake_testtask || Rake::TestTask.new
-
-      # Make configurations consistent between TTNT::TestTask and Rake::TestTask
-      # 1. Copy options from @rake_testtask to self
-      @test_files = @rake_testtask.instance_variable_get('@test_files')
-      @name = @rake_testtask.name
-      # 2. Execute configuration block
-      yield self if block_given?
-      # 3. Apply configuration from given block back to @rake_testtask
-      @rake_testtask.test_files = @test_files
-      @rake_testtask.name = @name
-
-      @anchor_description = 'Generate test-to-code mapping' + (@rake_testtask.name == :test ? '' : " for #{@rake_testtask.name}")
-      @run_description = 'Run selected tests' + (@rake_testtask.name == :test ? '' : "for #{@rake_testtask.name}")
-      define_tasks
-    end
-
     # Returns array of test file names.
     #   Unlike Rake::TestTask#file_list, patterns are expanded.
     def expanded_file_list
-      test_files = Rake::FileList[@rake_testtask.pattern].compact
+      test_files = Rake::FileList[pattern].compact
       test_files += @test_files.to_a if @test_files
       test_files
     end
@@ -73,7 +72,7 @@ module TTNT
       # Task definitions are taken from Rake::TestTask
       # https://github.com/ruby/rake/blob/e644af3/lib/rake/testtask.rb#L98-L112
       namespace :ttnt do
-        namespace @rake_testtask.name do
+        namespace name do
           define_run_task
           define_anchor_task
         end
@@ -98,14 +97,14 @@ module TTNT
         else
           if ENV['ISOLATED']
             tests.each do |test|
-              args = "#{@rake_testtask.ruby_opts_string} #{test} #{@rake_testtask.option_list}"
+              args = "#{ruby_opts_string} #{test} #{option_list}"
               run_ruby args
               break if @failed && ENV['FAIL_FAST']
             end
           else
             args =
-              "#{@rake_testtask.ruby_opts_string} #{@rake_testtask.run_code} " +
-              "#{tests.to_a.join(' ')} #{@rake_testtask.option_list}"
+              "#{ruby_opts_string} #{run_code} " +
+              "#{tests.to_a.join(' ')} #{option_list}"
             run_ruby args
           end
         end
@@ -124,12 +123,12 @@ module TTNT
         # See test/test_helper.rb
         ENV['ANCHOR_TASK'] = '1'
 
-        Rake::FileUtilsExt.verbose(@rake_testtask.verbose) do
+        Rake::FileUtilsExt.verbose(verbose) do
           # Make it possible to require files in this gem
           gem_root = File.expand_path('../..', __FILE__)
           args =
             "-I#{gem_root} -r ttnt/anchor " +
-            "#{@rake_testtask.ruby_opts_string}"
+            "#{ruby_opts_string}"
 
           expanded_file_list.each do |test_file|
             run_ruby "#{args} #{test_file}"
