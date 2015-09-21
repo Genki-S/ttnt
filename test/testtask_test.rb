@@ -32,4 +32,25 @@ class TestTaskTest < Minitest::Test
     test_files = Rake::FileList['test/**/*_test.rb'] + ['test/dummy_test.rb']
     assert_equal test_files, @ttnt_task.expanded_file_list
   end
+
+  def test_instance_without_passing_rake_task
+    default_rake_task = Rake::TestTask.new
+    ttnt_task = TTNT::TestTask.new
+    assert ttnt_task.instance_variable_get(:@rake_testtask).kind_of?(Rake::TestTask)
+  end
+
+  def test_yield_and_configure
+    name = 'testname'
+    test_files = 'foo_test'
+    code_files = ['foo.rb', 'bar.rb']
+    ttnt_task = TTNT::TestTask.new { |t|
+      t.name = name
+      t.test_files = test_files
+      t.code_files = code_files
+    }
+    assert Rake::Task.task_defined?("ttnt:#{name}:anchor"),
+      "`ttnt:#{name}:anchor` task should be defined"
+    assert_equal FileList[test_files], ttnt_task.test_files
+    assert_equal code_files, ttnt_task.code_files
+  end
 end

@@ -63,6 +63,17 @@ module TTNT
       tests
     end
 
+    # Select (filter) code files from mapping by given file names.
+    #
+    # @param code_files [#include?] code file names to filter
+    def select_code_files!(code_files)
+      @mapping.map do |test, spectra|
+        spectra.select! do |code, lines|
+          code_files.include?(code)
+        end
+      end
+    end
+
     private
 
     # Convert absolute path to relative path from the project (Git repository) root.
