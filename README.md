@@ -5,9 +5,7 @@
 [![Code Climate](https://codeclimate.com/github/Genki-S/ttnt/badges/gpa.svg)](https://codeclimate.com/github/Genki-S/ttnt)
 [![Dependency Status](https://gemnasium.com/Genki-S/ttnt.svg)](https://gemnasium.com/Genki-S/ttnt)
 
-Developing under [Google Summer of Code 2015](http://www.google-melange.com/gsoc/homepage/google/gsoc2015) with mentoring organization [Ruby on Rails](http://rubyonrails.org/).
-
-Full proposal of this project is [here](https://github.com/Genki-S/gsoc2015/blob/master/proposal.md) (might be obsolete in some ways, read this README about this project itself rather than the proposal).
+Started as a [Google Summer of Code 2015](http://www.google-melange.com/gsoc/homepage/google/gsoc2015) project with mentoring organization [Ruby on Rails](http://rubyonrails.org/).
 
 ## Goal of this project
 
