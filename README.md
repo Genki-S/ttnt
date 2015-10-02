@@ -5,15 +5,13 @@
 [![Code Climate](https://codeclimate.com/github/Genki-S/ttnt/badges/gpa.svg)](https://codeclimate.com/github/Genki-S/ttnt)
 [![Dependency Status](https://gemnasium.com/Genki-S/ttnt.svg)](https://gemnasium.com/Genki-S/ttnt)
 
-Started as a [Google Summer of Code 2015](http://www.google-melange.com/gsoc/homepage/google/gsoc2015) project with mentoring organization [Ruby on Rails](http://rubyonrails.org/).
+Stop running tests which are clearly not affected by the change you introduced in your commit!
+
+Started as a [Google Summer of Code 2015](http://www.google-melange.com/gsoc/homepage/google/gsoc2015) project with mentoring organization [Ruby on Rails](http://rubyonrails.org/), with idea based on [Aaron Patterson](https://twitter.com/tenderlove)'s article ["Predicting Test Failures"](http://tenderlovemaking.com/2015/02/13/predicting-test-failues.html).
 
 ## Goal of this project
 
 [rails/rails](https://github.com/rails/rails) has a problem that CI builds take hours to finish. This project aims to solve that problem by making it possible to run only tests related to changes introduced in target commits/branches/PRs.
-
-### Approach
-
-The idea is based on [Aaron Patterson](https://twitter.com/tenderlove)'s article ["Predicting Test Failures"](http://tenderlovemaking.com/2015/02/13/predicting-test-failues.html). This program uses differences in code between base commit (say, the latest commit of master branch) and target commit (say, HEAD of your feature branch) to calculate which test cases are affected by that change.
 
 ## Terminology
 
@@ -33,12 +31,8 @@ This project is still in an early stage and we are experimenting the best approa
 
 Currently, this program does:
 
-- Generate test-to-code mapping for a given commit
-- Given base commit and target commit, output test files you should run
-
-## Roadmap
-
-Roadmap is under construction.
+- Generate test-to-code mapping with `$ rake ttnt:test:anchor`
+- Select tests related to the change between base commit and current HEAD, and run the selected tests
 
 ## Installation
 
