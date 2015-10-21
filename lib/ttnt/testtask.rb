@@ -28,8 +28,9 @@ module TTNT
 
       yield self if block_given?
 
-      @anchor_description = 'Generate test-to-code mapping' + (name == :test ? '' : " for #{name}")
-      @run_description = 'Run selected tests' + (name == :test ? '' : " for #{name}")
+      target = (name == :test) ? '' : " for #{name}"
+      @anchor_description = "Generate test-to-code mapping#{target}"
+      @run_description = "Run selected tests#{target}"
       define_tasks
     end
 
