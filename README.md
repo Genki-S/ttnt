@@ -1,3 +1,7 @@
+**This project is discontinued because of technical difficulty, and left here only for reference.**
+
+If I were to start this again from scratch, I'd store test-to-code mapping not in git repo in each project, but in some external storage in order not to clutter project git history.
+
 # TTNT: Test This, Not That!
 
 [![Build Status](https://travis-ci.org/Genki-S/ttnt.svg?branch=master)](https://travis-ci.org/Genki-S/ttnt)
